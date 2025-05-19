@@ -8,10 +8,33 @@ function Overflow.bulk_use(card, area, amount)
     if card.config.center.bulk_use then
         card.config.center:bulk_use(card, area, nil, amount)
     end
+    if Overflow.bulk_use_functions[card.config.center.key] then
+        Overflow.bulk_use_functions[card.config.center.key](card, area, nil, amount)
+    end
 end
 
 function Overflow.can_bulk_use(card)
     if type(card.config.center.can_bulk_use) == "boolean" then return card.config.center.can_bulk_use end
     if type(card.config.center.can_bulk_use) == "function" then return card.config.center:can_bulk_use(card) end
-    return card.config.center.can_bulk_use
+    return card.config.center.can_bulk_use or Overflow.bulk_use_functions[card.config.center.key]
+end
+
+function Overflow.can_merge(self)
+    if Overflow.config.only_stack_negatives then
+        if not self.edition or self.edition.key ~= "e_negative" then
+            return 
+        else    
+            local v, i = Overflow.TableMatches(G.consumeables.cards, function(v, i)
+                return v.config.center.key == self.config.center.key and v.edition and v.edition.key == "e_negative" and v ~= self
+            end)
+            return v
+        end
+    else
+        local v, i = Overflow.TableMatches(G.consumeables.cards, function(v, i)
+            if (not v.edition and not self.edition) or (v.edition and self.edition and v.edition.key == self.edition.key) then
+                return v.config.center.key == self.config.center.key and v ~= self
+            end
+        end)
+        return v
+    end
 end

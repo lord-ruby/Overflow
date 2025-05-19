@@ -1,7 +1,7 @@
 --automatically stack consumables
 local emplace_ref = CardArea.emplace
 function CardArea:emplace(card, ...)
-    if self ~= G.consumeables or card.config.center.set == "Joker" then 
+    if self ~= G.consumeables or card.config.center.set == "Joker" or card.ability.split then 
         emplace_ref(self, card, ...)
     else
         if Overflow.config.only_stack_negatives then
@@ -38,7 +38,7 @@ end
 
 local set_editionref = Card.set_edition
 function Card:set_edition(edition, ...)
-    if self.area ~= G.consumeables or self.config.center.set == "Joker" then
+    if self.area ~= G.consumeables or self.config.center.set == "Joker" or self.ability.split then
         set_editionref(self, edition, ...)
     else
         if Overflow.config.only_stack_negatives then
@@ -99,5 +99,15 @@ local copy_cardref = copy_card
 function copy_card(other, new_card, card_scale, playing_card, strip_edition, dont_reset_qty)
     local new_card2 = copy_cardref(other, new_card, card_scale, playing_card, strip_edition)
     if not dont_reset_qty then new_card2.ability.overflow_amount = nil end
+    new_card2.ability.split = nil
+    G.E_MANAGER:add_event(Event({
+        trigger = 'after',
+        delay = 0.1,
+        func = function()
+            new_card2:create_overflow_ui()
+            other:create_overflow_ui()
+            return true
+        end
+    }))
     return new_card2
 end
