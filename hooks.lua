@@ -102,7 +102,6 @@ function copy_card(other, new_card, card_scale, playing_card, strip_edition, don
     new_card2.ability.split = nil
     G.E_MANAGER:add_event(Event({
         trigger = 'after',
-        delay = 0.1,
         func = function()
             new_card2:create_overflow_ui()
             other:create_overflow_ui()
@@ -110,4 +109,11 @@ function copy_card(other, new_card, card_scale, playing_card, strip_edition, don
         end
     }))
     return new_card2
+end
+
+local set_cost_ref = Card.set_cost
+function Card:set_cost()
+	set_cost_ref(self)
+	self.sell_cost = self.sell_cost * (self.ability.overflow_amount or 1)
+    self.sell_cost_label = self.facing == 'back' and '?' or self.sell_cost
 end

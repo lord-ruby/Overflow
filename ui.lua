@@ -8,11 +8,12 @@ function Card:create_overflow_ui()
             self.children.overflow_ui:remove()
             self.children.overflow_ui = nil 
         end
+        self.ability.overflow_amount_text = self.ability.overflow_amount_text or number_format(self.ability.overflow_amount)
         self.children.overflow_ui = UIBox {
 			definition = {n=G.UIT.C, config={align = "tm"}, nodes={
-                {n=G.UIT.C, config={ref_table = self, align = "tm",maxw = 0.45, padding = 0.1, r=0.08, minw = 0.45, minh = 0.45, hover = true, shadow = true, colour = G.C.UI.BACKGROUND_INACTIVE}, nodes={
+                {n=G.UIT.C, config={ref_table = self, align = "tm",maxw = 1.5, padding = 0.1, r=0.08, minw = 0.45, minh = 0.45, hover = true, shadow = true, colour = G.C.UI.BACKGROUND_INACTIVE}, nodes={
                   {n=G.UIT.T, config={text = "x",colour = G.C.RED, scale = 0.35, shadow = true}},
-                  {n=G.UIT.T, config={ref_table = self.ability, ref_value = 'overflow_amount',colour = G.C.WHITE, scale = 0.35, shadow = true}}
+                  {n=G.UIT.T, config={ref_table = self.ability, ref_value = 'overflow_amount_text',colour = G.C.WHITE, scale = 0.35, shadow = true}}
                 }}
               }
 			},
@@ -255,6 +256,7 @@ G.FUNCS.split_one = function(e)
     local new_card = copy_card(card)
     new_card.ability.overflow_amount = nil
     card.ability.overflow_amount = card.ability.overflow_amount - 1
+    card.ability.overflow_amount_text = number_format(card.ability.overflow_amount)
     new_card:add_to_deck()
     new_card.ability.split = true
     G.consumeables:emplace(new_card)
@@ -278,10 +280,10 @@ G.FUNCS.merge = function(e)
     local v = Overflow.can_merge(card)
     if v then
         v.ability.overflow_amount = (v.ability.overflow_amount or 1) + (card.ability.overflow_amount or 1)
+        v.ability.overflow_amount_text = number_format(v.ability.overflow_amount)
         card:start_dissolve()
         G.E_MANAGER:add_event(Event({
             trigger = 'after',
-            delay = 0.1,
             func = function()
                 v:create_overflow_ui()
                 card:create_overflow_ui()
@@ -311,6 +313,8 @@ G.FUNCS.split_half = function(e)
     local bottom_half = card.ability.overflow_amount - top_half
     new_card.ability.overflow_amount = bottom_half
     card.ability.overflow_amount = top_half
+    card.ability.overflow_amount_text = number_format(card.ability.overflow_amount)
+    new_card.ability.overflow_amount_text = number_format(new_card.ability.overflow_amount)
     new_card:add_to_deck()
     new_card.ability.split = true
     G.consumeables:emplace(new_card)

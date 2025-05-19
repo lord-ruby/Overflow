@@ -38,3 +38,9 @@ function Overflow.can_merge(self)
         return v
     end
 end
+
+function Overflow.set_amount(card, amount)
+    card.ability.overflow_amount = amount
+    card.ability.overflow_amount_text = number_format(amount)
+    card:create_overflow_ui()
+end
