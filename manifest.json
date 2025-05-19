@@ -1,0 +1,16 @@
+{
+    "name": "Overflow",
+    "id": "ovrf",
+    "version": "1.0.0",
+    "website_url": "",
+    "description": "A consumable stacking system built from the ground up.",
+    "prefix": "ovrf",
+    "author": ["Ruby"],
+    "main_file": "Overflow.lua",
+    "priority": 1000,
+    "badge_colour": "FE0001",
+    "dependencies": [
+    ],
+    "conflicts": [
+    ]
+}

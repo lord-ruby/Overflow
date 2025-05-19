@@ -1,0 +1,82 @@
+[manifest]
+version = "1.0.0"
+dump_lua = true
+priority = 0
+
+[[patches]]
+[patches.pattern]
+target = "engine/controller.lua"
+pattern = '''
+local debugplus = require("debugplus.core")
+debugplus.handleKeys(self, key, dt)
+'''
+position = "at"
+payload = '''
+local debugplus = require("debugplus.core")
+local ref = debugplus.handleKeys
+debugplus.handleKeys = function(controller, key, dt)
+    if controller.hovering.target and controller.hovering.target:is(Card) then
+        local _card = controller.hovering.target
+        if key == "c" then
+            local _area
+            if _card.ability.set == 'Joker' then
+                _area = G.jokers
+            elseif _card.playing_card then
+                if G.hand and G.hand.config.card_count ~= 0 then
+                    _area = G.hand
+                else 
+                    _area = G.deck
+                end
+            elseif _card.ability.consumeable then
+                _area = G.consumeables
+            end
+            if _area == nil then
+                return print("Error: Trying to dup card without an area")
+            end
+            local new_card = copy_card(_card, nil, nil, _card.playing_card, nil, true)
+            new_card:add_to_deck()
+            if _card.playing_card then
+                table.insert(G.playing_cards, new_card)
+            end
+            _area:emplace(new_card)
+        else
+            ref(controller, key, dt)
+        end
+    end
+end
+debugplus.handleKeys(self, key, dt)
+'''
+match_indent = true
+overwrite = false
+
+[[patches]]
+[patches.pattern]
+target = "functions/button_callbacks.lua"
+pattern = '''
+e.config.ref_table:use_consumeable(area)
+'''
+position = "at"
+payload = '''
+local amt = e.config.ref_table.ability.overflow_used_amount
+if to_big(amt or 1) <= to_big(1) then
+    e.config.ref_table:use_consumeable(area)
+else
+    Overflow.bulk_use(e.config.ref_table, area, amt)
+end
+e.config.ref_table.ability.overflow_used_amount = nil
+'''
+match_indent = true
+overwrite = false
+
+[[patches]]
+[patches.pattern]
+target = "functions/button_callbacks.lua"
+pattern = '''
+  G.FUNCS.use_card = function(e, mute, nosave)
+'''
+position = "at"
+payload = '''
+  G.FUNCS.use_card = function(e, mute, nosave, amt)
+'''
+match_indent = true
+overwrite = false
