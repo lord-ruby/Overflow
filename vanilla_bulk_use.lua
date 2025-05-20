@@ -23,7 +23,7 @@ Overflow.bulk_use_functions = {
             level_up_hand(self, k, true, amount or 1)
         end
         update_hand_text({sound = 'button', volume = 0.7, pitch = 1.1, delay = 0}, {mult = 0, chips = 0, handname = '', level = ''})
-    end
+    end,
 }
 for i, v in pairs(G.P_CENTERS) do
     if v.set == "Planet" and not v.original_mod then
