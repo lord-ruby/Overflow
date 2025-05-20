@@ -19,23 +19,37 @@ function Overflow.can_bulk_use(card)
     return card.config.center.can_bulk_use or Overflow.bulk_use_functions[card.config.center.key]
 end
 
-function Overflow.can_merge(self)
-    if Overflow.config.only_stack_negatives then
-        if not self.edition or self.edition.key ~= "e_negative" then
-            return 
-        else    
+function Overflow.can_merge(self, card)
+    if not card then
+        if Overflow.config.only_stack_negatives then
+            if not self.edition or self.edition.key ~= "e_negative" then
+                return 
+            else    
+                local v, i = Overflow.TableMatches(G.consumeables.cards, function(v, i)
+                    return v.config.center.key == self.config.center.key and v.edition and v.edition.key == "e_negative" and v ~= self
+                end)
+                return v
+            end
+        else
             local v, i = Overflow.TableMatches(G.consumeables.cards, function(v, i)
-                return v.config.center.key == self.config.center.key and v.edition and v.edition.key == "e_negative" and v ~= self
+                if (not v.edition and not self.edition) or (v.edition and self.edition and v.edition.key == self.edition.key) then
+                    return v.config.center.key == self.config.center.key and v ~= self
+                end
             end)
             return v
         end
     else
-        local v, i = Overflow.TableMatches(G.consumeables.cards, function(v, i)
-            if (not v.edition and not self.edition) or (v.edition and self.edition and v.edition.key == self.edition.key) then
-                return v.config.center.key == self.config.center.key and v ~= self
+        if Overflow.config.only_stack_negatives then
+            if not self.edition or self.edition.key ~= "e_negative" then
+                return 
+            else 
+                return card.config.center.key == self.config.center.key and card.edition and card.edition.key == "e_negative" and v ~= self
             end
-        end)
-        return v
+        else
+            if (not card.edition and not self.edition) or (card.edition and self.edition and card.edition.key == self.edition.key) then
+                return card.config.center.key == self.config.center.key and card ~= self
+            end
+        end
     end
 end
 

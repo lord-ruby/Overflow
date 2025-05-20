@@ -97,7 +97,7 @@ end
 local copy_cardref = copy_card
 function copy_card(other, new_card, card_scale, playing_card, strip_edition, dont_reset_qty)
     local new_card2 = copy_cardref(other, new_card, card_scale, playing_card, strip_edition)
-    if other.area == G.consumeables and other.config.center.set ~= "Joker" then
+    if other.area == G.consumeables and other.config.center.set ~= "Joker" and Overflow.can_merge(other, new_card) then
         if not dont_reset_qty then 
             Overflow.set_amount(new_card, nil) 
             new_card2.ability.split = nil
