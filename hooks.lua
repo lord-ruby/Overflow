@@ -9,7 +9,7 @@ function CardArea:emplace(card, ...)
                 emplace_ref(self, card, ...)
             else
                 local v, i = Overflow.TableMatches(self.cards, function(v, i)
-                    return v.config.center.key == card.config.center.key and v.edition and v.edition.key == "e_negative"
+                    return v.config.center.key == card.config.center.key and v.edition and v.edition.key == "e_negative" and v ~= self
                 end)
                 if v then
                     Overflow.set_amount(v, (v.ability.overflow_amount or 1) + (card.ability.overflow_amount or 1))
@@ -22,7 +22,7 @@ function CardArea:emplace(card, ...)
         else    
             local v, i = Overflow.TableMatches(self.cards, function(v, i)
                 if (not v.edition and not card.edition) or (v.edition and card.edition and v.edition.key == card.edition.key) then
-                    return v.config.center.key == card.config.center.key
+                    return v.config.center.key == card.config.center.key and v ~= self
                 end
             end)
             if v then
@@ -46,7 +46,7 @@ function Card:set_edition(edition, ...)
                 set_editionref(self, edition, ...)
             else    
                 local v, i = Overflow.TableMatches(G.consumeables.cards, function(v, i)
-                    return v.config.center.key == self.config.center.key and v.edition and v.edition.key == "e_negative"
+                    return v.config.center.key == self.config.center.key and v.edition and v.edition.key == "e_negative" and v ~= self
                 end)
                 if v then
                     Overflow.set_amount(v, (v.ability.overflow_amount or 1) + (card.ability.overflow_amount or 1))
@@ -59,7 +59,7 @@ function Card:set_edition(edition, ...)
         else
             local v, i = Overflow.TableMatches(G.consumeables.cards, function(v, i)
                 if (not v.edition and not self.edition) or (v.edition and self.edition and v.edition.key == self.edition.key) then
-                    return v.config.center.key == self.config.center.key
+                    return v.config.center.key == self.config.center.key and v ~= self
                 end
             end)
             if v then
