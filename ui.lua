@@ -43,6 +43,7 @@ end
 local highlight_ref = Card.highlight
 function Card:highlight(is_highlighted)
     if is_highlighted and self.ability.overflow_amount and to_big(self.ability.overflow_amount) > to_big(1) then
+        local y = Overflow.can_bulk_use(self) and 0.3 or 0
         self.children.bulk_use = UIBox {
             definition = {
                 n = G.UIT.ROOT,
@@ -75,7 +76,7 @@ function Card:highlight(is_highlighted)
                 align = 'bmi',
                 offset = {
                     x = 0,
-                    y = 0.3
+                    y = y
                 },
                 bond = 'Strong',
                 parent = self
@@ -113,7 +114,7 @@ function Card:highlight(is_highlighted)
                 align = 'bmi',
                 offset = {
                     x = 0,
-                    y = 0.8
+                    y = y + 0.5
                 },
                 bond = 'Strong',
                 parent = self
@@ -151,7 +152,7 @@ function Card:highlight(is_highlighted)
                 align = 'bmi',
                 offset = {
                     x = 0,
-                    y = 1.3
+                    y = y + 1
                 },
                 bond = 'Strong',
                 parent = self
@@ -190,7 +191,7 @@ function Card:highlight(is_highlighted)
                     align = 'bmi',
                     offset = {
                         x = 0,
-                        y = 1.8
+                        y = y + 1.5
                     },
                     bond = 'Strong',
                     parent = self

@@ -99,8 +99,9 @@ function copy_card(other, new_card, card_scale, playing_card, strip_edition, don
     local new_card2 = copy_cardref(other, new_card, card_scale, playing_card, strip_edition)
     if other.area == G.consumeables and other.config.center.set ~= "Joker" and Overflow.can_merge(other, new_card) then
         if not dont_reset_qty then 
-            Overflow.set_amount(new_card, nil) 
             new_card2.ability.split = nil
+            new_card2.ability.overflow_amount = 1
+            new_card2.ability.overflow_amount_text = ""
             G.E_MANAGER:add_event(Event({
                 trigger = 'after',
                 func = function()
@@ -117,6 +118,8 @@ function copy_card(other, new_card, card_scale, playing_card, strip_edition, don
             return new_card2
         end
     else    
+        new_card2.ability.overflow_amount = 1
+        new_card2.ability.overflow_amount_text = ""
         return new_card2
     end
 end
