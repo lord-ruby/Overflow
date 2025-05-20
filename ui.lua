@@ -370,7 +370,7 @@ local overflowConfigTab = function()
 	ovrf_nodes[#ovrf_nodes + 1] = create_toggle({
 		label = localize("k_only_stack_negatives"),
 		active_colour = HEX("40c76d"),
-		ref_table = Entropy.config,
+		ref_table = Overflow.config,
 		ref_value = "only_stack_negatives",
 		callback = function()
         end,
