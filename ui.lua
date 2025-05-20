@@ -44,7 +44,7 @@ end
 
 local highlight_ref = Card.highlight
 function Card:highlight(is_highlighted)
-    if is_highlighted and self.ability.immutable.overflow_amount and to_big(self.ability.immutable.overflow_amount) > to_big(1) then
+    if self.area == G.consumeables and self.config.center.set ~= "Joker" and is_highlighted and self.ability.immutable.overflow_amount and to_big(self.ability.immutable.overflow_amount) > to_big(1) then
         local y = Overflow.can_bulk_use(self) and 0.3 or 0
         self.children.bulk_use = UIBox {
             definition = {
