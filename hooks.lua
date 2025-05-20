@@ -49,7 +49,7 @@ function Card:set_edition(edition, ...)
                     return v.config.center.key == self.config.center.key and v.edition and v.edition.key == "e_negative" and v ~= self
                 end)
                 if v then
-                    Overflow.set_amount(v, (v.ability.overflow_amount or 1) + (card.ability.overflow_amount or 1))
+                    Overflow.set_amount(v, (v.ability.overflow_amount or 1) + (self.ability.overflow_amount or 1))
                     self.states.visible = false
                     self:start_dissolve()
                 else
@@ -63,7 +63,7 @@ function Card:set_edition(edition, ...)
                 end
             end)
             if v then
-                Overflow.set_amount(v, (v.ability.overflow_amount or 1) + (card.ability.overflow_amount or 1))
+                Overflow.set_amount(v, (v.ability.overflow_amount or 1) + (self.ability.overflow_amount or 1))
                 self.states.visible = false
                 self:start_dissolve()
             else
