@@ -12,9 +12,9 @@ function CardArea:emplace(card, ...)
                     return v.config.center.key == card.config.center.key and v.edition and v.edition.key == "e_negative"
                 end)
                 if v then
-                    v.ability.overflow_amount = (v.ability.overflow_amount or 1) + (card.ability.overflow_amount or 1)
+                    Overflow.set_amount(v, (v.ability.overflow_amount or 1) + (card.ability.overflow_amount or 1))
+                    card.states.visible = false
                     card:start_dissolve()
-                    v:create_overflow_ui()
                 else
                     emplace_ref(self, card, ...)
                 end
@@ -26,9 +26,9 @@ function CardArea:emplace(card, ...)
                 end
             end)
             if v then
-                v.ability.overflow_amount = (v.ability.overflow_amount or 1) + (card.ability.overflow_amount or 1)
+                Overflow.set_amount(v, (v.ability.overflow_amount or 1) + (card.ability.overflow_amount or 1))
+                card.states.visible = false
                 card:start_dissolve()
-                v:create_overflow_ui()
             else
                 emplace_ref(self, card, ...)
             end
@@ -49,9 +49,9 @@ function Card:set_edition(edition, ...)
                     return v.config.center.key == self.config.center.key and v.edition and v.edition.key == "e_negative"
                 end)
                 if v then
-                    v.ability.overflow_amount = (v.ability.overflow_amount or 1) + (self.ability.overflow_amount or 1)
+                    Overflow.set_amount(v, (v.ability.overflow_amount or 1) + (card.ability.overflow_amount or 1))
+                    self.states.visible = false
                     self:start_dissolve()
-                    v:create_overflow_ui()
                 else
                     set_editionref(self, edition, ...)
                 end
@@ -63,9 +63,9 @@ function Card:set_edition(edition, ...)
                 end
             end)
             if v then
-                v.ability.overflow_amount = (v.ability.overflow_amount or 1) + (self.ability.overflow_amount or 1)
+                Overflow.set_amount(v, (v.ability.overflow_amount or 1) + (card.ability.overflow_amount or 1))
+                self.states.visible = false
                 self:start_dissolve()
-                v:create_overflow_ui()
             else
                 set_editionref(self, edition, ...)
             end
@@ -83,10 +83,9 @@ G.FUNCS.use_card = function(e, mute, nosave)
             trigger = 'after',
             delay = 0.3,
             func = function()
-                new_card.ability.overflow_amount = card.ability.overflow_amount - 1
+                Overflow.set_amount(new_card, card.ability.overflow_amount - 1)
                 new_card:add_to_deck()
                 G.consumeables:emplace(new_card)
-                new_card:create_overflow_ui()
                 return true
             end
         }))
@@ -98,7 +97,7 @@ end
 local copy_cardref = copy_card
 function copy_card(other, new_card, card_scale, playing_card, strip_edition, dont_reset_qty)
     local new_card2 = copy_cardref(other, new_card, card_scale, playing_card, strip_edition)
-    if not dont_reset_qty then new_card2.ability.overflow_amount = nil end
+    if not dont_reset_qty then Overflow.set_amount(new_card, nil) end
     new_card2.ability.split = nil
     G.E_MANAGER:add_event(Event({
         trigger = 'after',
@@ -115,5 +114,5 @@ local set_cost_ref = Card.set_cost
 function Card:set_cost()
 	set_cost_ref(self)
 	self.sell_cost = self.sell_cost * (self.ability.overflow_amount or 1)
-    self.sell_cost_label = self.facing == 'back' and '?' or self.sell_cost
+    self.sell_cost_label = self.facing == 'back' and '?' or number_format(self.sell_cost)
 end

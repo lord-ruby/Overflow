@@ -40,7 +40,13 @@ function Overflow.can_merge(self)
 end
 
 function Overflow.set_amount(card, amount)
-    card.ability.overflow_amount = amount
-    card.ability.overflow_amount_text = number_format(amount)
-    card:create_overflow_ui()
+    if card then
+        card.ability.overflow_amount = amount
+        if to_big(card.ability.overflow_amount) < to_big(1e100) then
+            card.ability.overflow_amount = to_number(card.ability.overflow_amount)
+        end
+        card.ability.overflow_amount_text = amount and number_format(amount) or "s"
+        card:set_cost()
+        card:create_overflow_ui()
+    end
 end

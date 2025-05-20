@@ -198,21 +198,62 @@ function Card:highlight(is_highlighted)
             }
         end
     else    
-        if self.children.bulk_use then 
-            self.children.bulk_use:remove()
-            self.children.bulk_use = nil
-        end
-        if self.children.split_one then 
-            self.children.split_one:remove()
-            self.children.split_one = nil
-        end
-        if self.children.split_half then 
-            self.children.split_half:remove()
-            self.children.split_half = nil
-        end
-        if self.children.merge then 
-            self.children.merge:remove()
-            self.children.merge = nil
+        if is_highlighted and Overflow.can_merge(self) then
+            self.children.merge = UIBox {
+                definition = {
+                    n = G.UIT.ROOT,
+                    config = {
+                        minh = 0.3,
+                        maxh = 0.5,
+                        minw = 0.4,
+                        maxw = 4,
+                        r = 0.08,
+                        padding = 0.1,
+                        align = 'cm',
+                        colour = G.C.DARK_EDITION,
+                        shadow = true,
+                        button = 'merge',
+                        func = 'can_merge',
+                        ref_table = self
+                    },
+                    nodes = {
+                        {
+                            n = G.UIT.T,
+                            config = {
+                                text = localize("k_merge"),
+                                scale = 0.3,
+                                colour = G.C.UI.TEXT_LIGHT
+                            }
+                        }
+                    }
+                },
+                config = {
+                    align = 'bmi',
+                    offset = {
+                        x = 0,
+                        y = 0.3
+                    },
+                    bond = 'Strong',
+                    parent = self
+                }
+            }
+        else
+            if self.children.bulk_use then 
+                self.children.bulk_use:remove()
+                self.children.bulk_use = nil
+            end
+            if self.children.split_one then 
+                self.children.split_one:remove()
+                self.children.split_one = nil
+            end
+            if self.children.split_half then 
+                self.children.split_half:remove()
+                self.children.split_half = nil
+            end
+            if self.children.merge then 
+                self.children.merge:remove()
+                self.children.merge = nil
+            end
         end
     end
     return highlight_ref(self,is_highlighted)
@@ -234,7 +275,7 @@ end
 G.FUNCS.bulk_use = function(e)
 	local card = e.config.ref_table
     card.ability.overflow_used_amount = card.ability.overflow_amount
-    card.ability.overflow_amount = nil
+    Overflow.set_amount(card, nil)
     G.FUNCS.use_card(e, false, true)
 end
 
@@ -254,9 +295,8 @@ end
 G.FUNCS.split_one = function(e)
 	local card = e.config.ref_table
     local new_card = copy_card(card)
-    new_card.ability.overflow_amount = nil
-    card.ability.overflow_amount = card.ability.overflow_amount - 1
-    card.ability.overflow_amount_text = number_format(card.ability.overflow_amount)
+    Overflow.set_amount(new_card, nil)
+    Overflow.set_amount(card, card.ability.overflow_amount - 1)
     new_card:add_to_deck()
     new_card.ability.split = true
     G.consumeables:emplace(new_card)
@@ -279,8 +319,7 @@ G.FUNCS.merge = function(e)
 	local card = e.config.ref_table
     local v = Overflow.can_merge(card)
     if v then
-        v.ability.overflow_amount = (v.ability.overflow_amount or 1) + (card.ability.overflow_amount or 1)
-        v.ability.overflow_amount_text = number_format(v.ability.overflow_amount)
+        Overflow.set_amount(v, (v.ability.overflow_amount or 1) + (card.ability.overflow_amount or 1))
         card:start_dissolve()
         G.E_MANAGER:add_event(Event({
             trigger = 'after',
@@ -311,10 +350,8 @@ G.FUNCS.split_half = function(e)
     local new_card = copy_card(card)
     local top_half = math.floor(card.ability.overflow_amount/2)
     local bottom_half = card.ability.overflow_amount - top_half
-    new_card.ability.overflow_amount = bottom_half
-    card.ability.overflow_amount = top_half
-    card.ability.overflow_amount_text = number_format(card.ability.overflow_amount)
-    new_card.ability.overflow_amount_text = number_format(new_card.ability.overflow_amount)
+    Overflow.set_amount(new_card, bottom_half)
+    Overflow.set_amount(card, top_half)
     new_card:add_to_deck()
     new_card.ability.split = true
     G.consumeables:emplace(new_card)
