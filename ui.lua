@@ -265,7 +265,7 @@ end
 G.FUNCS.can_bulk_use = function(e)
 	local card = e.config.ref_table
 	if (card.config.center.bulk_use or Overflow.bulk_use_functions[card.config.center.key]) and (not card.config.center.can_bulk_use or Overflow.can_bulk_use(card)) and to_big(card.ability.immutable.overflow_amount) > to_big(1) then
-        e.config.colour = G.C.PURPLE
+        e.config.colour = G.C.SECONDARY_SET[card.config.center.set]
         e.config.button = 'bulk_use'
 		e.states.visible = true
 	else
@@ -285,7 +285,7 @@ end
 G.FUNCS.can_split_one = function(e)
 	local card = e.config.ref_table
 	if to_big(card.ability.immutable.overflow_amount) > to_big(1) then
-        e.config.colour = G.C.PURPLE
+        e.config.colour = G.C.SECONDARY_SET[card.config.center.set]
         e.config.button = 'split_one'
 		e.states.visible = true
 	else
@@ -308,7 +308,7 @@ end
 G.FUNCS.can_merge = function(e)
 	local card = e.config.ref_table
 	if Overflow.can_merge(card) then
-        e.config.colour = G.C.PURPLE
+        e.config.colour = G.C.SECONDARY_SET[card.config.center.set]
         e.config.button = 'merge'
 		e.states.visible = true
 	else
@@ -338,7 +338,7 @@ end
 G.FUNCS.can_split_half = function(e)
 	local card = e.config.ref_table
 	if to_big(card.ability.immutable.overflow_amount) > to_big(1) then
-        e.config.colour = G.C.PURPLE
+        e.config.colour = G.C.SECONDARY_SET[card.config.center.set]
         e.config.button = 'split_half'
 		e.states.visible = true
 	else
