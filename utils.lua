@@ -19,8 +19,8 @@ function Overflow.can_bulk_use(card)
     return card.config.center.can_bulk_use or Overflow.bulk_use_functions[card.config.center.key]
 end
 
-function Overflow.can_merge(self, card, bypass)
-    if Overflow.is_blacklisted(self) or Overflow.is_blacklisted(card) or self.area ~= G.consumeables or self.config.center.set == "Joker" then return end
+function Overflow.can_merge(self, card, bypass, ignore_area)
+    if Overflow.is_blacklisted(self) or Overflow.is_blacklisted(card) or (self.area ~= G.consumeables and not ignore_area) or self.config.center.set == "Joker" then return end
     if not card then
         if Overflow.config.only_stack_negatives then
             if not self.edition or self.edition.key ~= "e_negative" then
@@ -40,7 +40,7 @@ function Overflow.can_merge(self, card, bypass)
             return v
         end
     else
-        if card.area ~= G.consumeables or card.config.center.set == "Joker" then return end
+        if (card.area ~= G.consumeables and not ignore_area) or card.config.center.set == "Joker" then return end
         if Overflow.config.only_stack_negatives then
             if not self.edition or self.edition.key ~= "e_negative" then
                 return 
