@@ -356,3 +356,35 @@ G.FUNCS.split_half = function(e)
     new_card.ability.split = true
     G.consumeables:emplace(new_card)
 end
+
+local overflowConfigTab = function()
+	ovrf_nodes = {
+	}
+	left_settings = { n = G.UIT.C, config = { align = "tl", padding = 0.05 }, nodes = {} }
+	right_settings = { n = G.UIT.C, config = { align = "tl", padding = 0.05 }, nodes = {} }
+	config = { n = G.UIT.R, config = { align = "tm", padding = 0 }, nodes = { left_settings, right_settings } }
+	ovrf_nodes[#ovrf_nodes + 1] = config
+	ovrf_nodes[#ovrf_nodes + 1] = create_toggle({
+		label = localize("k_only_stack_negatives"),
+		active_colour = HEX("40c76d"),
+		ref_table = Entropy.config,
+		ref_value = "only_stack_negatives",
+		callback = function()
+        end,
+	})
+	return {
+		n = G.UIT.ROOT,
+		config = {
+			emboss = 0.05,
+			minh = 6,
+			r = 0.1,
+			minw = 10,
+			align = "cm",
+			padding = 0.2,
+			colour = G.C.BLACK,
+		},
+		nodes = ovrf_nodes,
+	}
+end
+
+SMODS.current_mod.config_tab = overflowConfigTab
