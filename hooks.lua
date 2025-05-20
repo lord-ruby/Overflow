@@ -1,7 +1,7 @@
 --automatically stack consumables
 local emplace_ref = CardArea.emplace
 function CardArea:emplace(card, ...)
-    if self ~= G.consumeables or card.config.center.set == "Joker" or card.ability.split then 
+    if self ~= G.consumeables or card.config.center.set == "Joker" or card.ability.split or Overflow.is_blacklisted(card) then 
         emplace_ref(self, card, ...)
     else
         if Overflow.config.only_stack_negatives then
@@ -38,7 +38,7 @@ end
 
 local set_editionref = Card.set_edition
 function Card:set_edition(edition, ...)
-    if self.area ~= G.consumeables or self.config.center.set == "Joker" or self.ability.split then
+    if self.area ~= G.consumeables or self.config.center.set == "Joker" or self.ability.split or Overflow.is_blacklisted(self) then
         set_editionref(self, edition, ...)
     else
         if Overflow.config.only_stack_negatives then
@@ -97,7 +97,7 @@ end
 local copy_cardref = copy_card
 function copy_card(other, new_card, card_scale, playing_card, strip_edition, dont_reset_qty)
     local new_card2 = copy_cardref(other, new_card, card_scale, playing_card, strip_edition)
-    if other.area == G.consumeables and other.config.center.set ~= "Joker" and Overflow.can_merge(other, new_card) then
+    if other.area == G.consumeables and other.config.center.set ~= "Joker" and Overflow.can_merge(other, new_card) and not Overflow.is_blacklisted(other) then
         if not dont_reset_qty then 
             new_card2.ability.split = nil
             new_card2.ability.overflow_amount = 1

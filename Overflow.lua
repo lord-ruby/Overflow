@@ -1,4 +1,4 @@
-Overflow = SMODS.current_mod
+Overflow.config = SMODS.current_mod.config
 
 local files = {
     "ui",

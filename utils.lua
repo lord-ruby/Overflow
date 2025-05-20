@@ -20,6 +20,7 @@ function Overflow.can_bulk_use(card)
 end
 
 function Overflow.can_merge(self, card, bypass)
+    if Overflow.is_blacklisted(self) or Overflow.is_blacklisted(card) then return end
     if not card then
         if Overflow.config.only_stack_negatives then
             if not self.edition or self.edition.key ~= "e_negative" then
@@ -80,4 +81,9 @@ function Overflow.weighted_random(pool, pseudoseed)
           return v[2]
        end
     end
+end
+
+function Overflow.is_blacklisted(card)
+    if not card then return false end
+    return Overflow.blacklist[card.config.center.key] or Overflow.blacklist[card.config.center.set]
 end

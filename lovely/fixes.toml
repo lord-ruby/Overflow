@@ -80,3 +80,16 @@ payload = '''
 '''
 match_indent = true
 overwrite = false
+
+[[patches]]
+[patches.pattern]
+target = "main.lua"
+pattern = '''function love.load()'''
+position = "before"
+payload = '''
+Overflow = {}
+Overflow.blacklist = {
+
+}
+'''
+match_indent = true
