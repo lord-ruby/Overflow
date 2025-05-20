@@ -375,6 +375,14 @@ local overflowConfigTab = function()
 		callback = function()
         end,
 	})
+    ovrf_nodes[#ovrf_nodes + 1] = create_toggle({
+		label = localize("k_fix_slots"),
+		active_colour = HEX("40c76d"),
+		ref_table = Overflow.config,
+		ref_value = "fix_slots",
+		callback = function()
+        end,
+	})
 	return {
 		n = G.UIT.ROOT,
 		config = {

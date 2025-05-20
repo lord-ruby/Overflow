@@ -5,7 +5,8 @@ return {
             k_split_one = "SPLIT ONE",
             k_split_half = "SPLIT HALF",
             k_merge = "MERGE",
-            k_only_stack_negatives = "Only stack negative consumables"
+            k_only_stack_negatives = "Only stack negative consumables",
+            k_fix_slots = "Stacked non-negatives take up the correct amount of slots"
         }
     }
 }
