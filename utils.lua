@@ -41,6 +41,9 @@ end
 
 function Overflow.set_amount(card, amount)
     if card then
+        if to_big(amount) < to_big(1e100) then
+            amount = to_number(amount)
+        end
         card.ability.overflow_amount = amount
         if to_big(card.ability.overflow_amount) < to_big(1e100) then
             card.ability.overflow_amount = to_number(card.ability.overflow_amount)

@@ -97,17 +97,28 @@ end
 local copy_cardref = copy_card
 function copy_card(other, new_card, card_scale, playing_card, strip_edition, dont_reset_qty)
     local new_card2 = copy_cardref(other, new_card, card_scale, playing_card, strip_edition)
-    if not dont_reset_qty then Overflow.set_amount(new_card, nil) end
-    new_card2.ability.split = nil
-    G.E_MANAGER:add_event(Event({
-        trigger = 'after',
-        func = function()
-            new_card2:create_overflow_ui()
-            other:create_overflow_ui()
-            return true
+    if other.area == G.consumeables and other.config.center.set ~= "Joker" then
+        if not dont_reset_qty then 
+            Overflow.set_amount(new_card, nil) 
+            new_card2.ability.split = nil
+            G.E_MANAGER:add_event(Event({
+                trigger = 'after',
+                func = function()
+                    new_card2:create_overflow_ui()
+                    other:create_overflow_ui()
+                    return true
+                end
+            }))
+            return new_card2
+        else
+            Overflow.set_amount(other, to_big((other.ability.overflow_amount or 1)) * 2) 
+            new_card2.ability.overflow_amount = 0
+            new_card2:start_dissolve()
+            return new_card2
         end
-    }))
-    return new_card2
+    else    
+        return new_card2
+    end
 end
 
 local set_cost_ref = Card.set_cost
