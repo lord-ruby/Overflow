@@ -26,16 +26,16 @@ SMODS.Joker:take_ownership("j_perkeo", {
             if G.consumeables.cards[1] then
                 local cards = {}
                 for i, v in ipairs(G.consumeables.cards) do
-                    cards[#cards+1] = {(v.ability.overflow_amount or 1), v}
+                    cards[#cards+1] = {(v.ability.immutable.overflow_amount or 1), v}
                 end
                 local card = Overflow.weighted_random(cards, "perkeo")
-                if card.ability.overflow_amount and Overflow.can_merge(card, card, true) then
-                    Overflow.set_amount(card, card.ability.overflow_amount + 1)
+                if card.ability.immutable.overflow_amount and Overflow.can_merge(card, card, true) then
+                    Overflow.set_amount(card, card.ability.immutable.overflow_amount + 1)
                 else
                     local check
                     for i, v in ipairs(G.consumeables.cards) do
                         if v.edition and v.edition.key == "e_negative" and v.config.center.key == card.config.center.key and v ~= card then
-                            Overflow.set_amount(v, (v.ability.overflow_amount or 1) + 1)
+                            Overflow.set_amount(v, (v.ability.immutable.overflow_amount or 1) + 1)
                             check = true
                         end
                     end
@@ -43,7 +43,7 @@ SMODS.Joker:take_ownership("j_perkeo", {
                         G.E_MANAGER:add_event(Event({
                             func = function() 
                                 local new_card = copy_card(card, nil)
-                                new_card.ability.overflow_amount = 1
+                                new_card.ability.immutable.overflow_amount = 1
                                 new_card:set_edition("e_negative", true)
                                 new_card:add_to_deck()
                                 G.consumeables:emplace(new_card) 

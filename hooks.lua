@@ -4,6 +4,7 @@ function CardArea:emplace(card, ...)
     if self ~= G.consumeables or card.config.center.set == "Joker" or card.ability.split or Overflow.is_blacklisted(card) then 
         emplace_ref(self, card, ...)
     else
+        if not card.ability.immutable then card.ability.immutable = {} end
         if Overflow.config.only_stack_negatives then
             if not card.edition or card.edition.key ~= "e_negative" then
                 emplace_ref(self, card, ...)
@@ -12,7 +13,7 @@ function CardArea:emplace(card, ...)
                     return v.config.center.key == card.config.center.key and v.edition and v.edition.key == "e_negative" and v ~= self
                 end)
                 if v then
-                    Overflow.set_amount(v, (v.ability.overflow_amount or 1) + (card.ability.overflow_amount or 1))
+                    Overflow.set_amount(v, (v.ability.immutable.overflow_amount or 1) + (card.ability.immutable.overflow_amount or 1))
                     card.states.visible = false
                     card:start_dissolve()
                 else
@@ -26,7 +27,7 @@ function CardArea:emplace(card, ...)
                 end
             end)
             if v then
-                Overflow.set_amount(v, (v.ability.overflow_amount or 1) + (card.ability.overflow_amount or 1))
+                Overflow.set_amount(v, (v.ability.immutable.overflow_amount or 1) + (card.ability.immutable.overflow_amount or 1))
                 card.states.visible = false
                 card:start_dissolve()
             else
@@ -41,6 +42,7 @@ function Card:set_edition(edition, ...)
     if self.area ~= G.consumeables or self.config.center.set == "Joker" or self.ability.split or Overflow.is_blacklisted(self) then
         set_editionref(self, edition, ...)
     else
+        if not self.ability.immutable then self.ability.immutable = {} end
         if Overflow.config.only_stack_negatives then
             if edition ~= "e_negative" then
                 set_editionref(self, edition, ...)
@@ -49,7 +51,7 @@ function Card:set_edition(edition, ...)
                     return v.config.center.key == self.config.center.key and v.edition and v.edition.key == "e_negative" and v ~= self
                 end)
                 if v then
-                    Overflow.set_amount(v, (v.ability.overflow_amount or 1) + (self.ability.overflow_amount or 1))
+                    Overflow.set_amount(v, (v.ability.immutable.overflow_amount or 1) + (self.ability.immutable.overflow_amount or 1))
                     self.states.visible = false
                     self:start_dissolve()
                 else
@@ -63,7 +65,7 @@ function Card:set_edition(edition, ...)
                 end
             end)
             if v then
-                Overflow.set_amount(v, (v.ability.overflow_amount or 1) + (self.ability.overflow_amount or 1))
+                Overflow.set_amount(v, (v.ability.immutable.overflow_amount or 1) + (self.ability.immutable.overflow_amount or 1))
                 self.states.visible = false
                 self:start_dissolve()
             else
@@ -76,14 +78,15 @@ end
 local use_cardref = G.FUNCS.use_card
 G.FUNCS.use_card = function(e, mute, nosave)
     local card = e.config.ref_table
-    if card.ability and card.ability.overflow_amount and to_big(card.ability.overflow_amount) > to_big(1) and card.area == G.consumeables then
+    
+    if card.ability and card.ability.immutable and card.ability.immutable.overflow_amount and to_big(card.ability.immutable.overflow_amount) > to_big(1) and card.area == G.consumeables then
         local new_card = copy_card(card)
         use_cardref(e, mute, nosave)
         G.E_MANAGER:add_event(Event({
             trigger = 'after',
             delay = 0.3,
             func = function()
-                Overflow.set_amount(new_card, card.ability.overflow_amount - 1)
+                Overflow.set_amount(new_card, card.ability.immutable.overflow_amount - 1)
                 new_card:add_to_deck()
                 G.consumeables:emplace(new_card)
                 return true
@@ -97,11 +100,12 @@ end
 local copy_cardref = copy_card
 function copy_card(other, new_card, card_scale, playing_card, strip_edition, dont_reset_qty)
     local new_card2 = copy_cardref(other, new_card, card_scale, playing_card, strip_edition)
-    if other.area == G.consumeables and other.config.center.set ~= "Joker" and Overflow.can_merge(other, new_card) and not Overflow.is_blacklisted(other) then
+    if other.area == G.consumeables and other.config.center.set ~= "Joker" and Overflow.can_merge(other, new_card2) and not Overflow.is_blacklisted(other) then
         if not dont_reset_qty then 
             new_card2.ability.split = nil
-            new_card2.ability.overflow_amount = 1
-            new_card2.ability.overflow_amount_text = ""
+            if not new_card2.ability.immutable then new_card2.ability.immutable = {} end
+            new_card2.ability.immutable.overflow_amount = 1
+            new_card2.ability.immutable.overflow_amount_text = ""
             G.E_MANAGER:add_event(Event({
                 trigger = 'after',
                 func = function()
@@ -112,14 +116,16 @@ function copy_card(other, new_card, card_scale, playing_card, strip_edition, don
             }))
             return new_card2
         else
-            Overflow.set_amount(other, to_big((other.ability.overflow_amount or 1)) * 2) 
-            new_card2.ability.overflow_amount = 0
+            Overflow.set_amount(other, to_big((other.ability.immutable.overflow_amount or 1)) * 2) 
+            if not new_card2.ability.immutable then new_card2.ability.immutable = {} end
+            new_card2.ability.immutable.overflow_amount = 0
             new_card2:start_dissolve()
             return new_card2
         end
     else    
-        new_card2.ability.overflow_amount = 1
-        new_card2.ability.overflow_amount_text = ""
+        if not new_card2.ability.immutable then new_card2.ability.immutable = {} end
+        new_card2.ability.immutable.overflow_amount = 1
+        new_card2.ability.immutable.overflow_amount_text = ""
         return new_card2
     end
 end
@@ -127,6 +133,23 @@ end
 local set_cost_ref = Card.set_cost
 function Card:set_cost()
 	set_cost_ref(self)
-	self.sell_cost = self.sell_cost * (self.ability.overflow_amount or 1)
+    if not self.ability.immutable then self.ability.immutable = {} end
+	self.sell_cost = self.sell_cost * (self.ability.immutable.overflow_amount or 1)
     self.sell_cost_label = self.facing == 'back' and '?' or number_format(self.sell_cost)
 end
+
+SMODS.Voucher:take_ownership('observatory', {
+    calculate = function(self, card, context)
+        if
+            context.other_consumeable and
+            context.other_consumeable.ability.set == 'Planet' and
+            context.other_consumeable.ability.consumeable.hand_type == context.scoring_name
+        then
+            if not context.other_consumeable.ability.immutable then context.other_consumeable.ability.immutable = {} end
+            return {
+                x_mult = to_big(card.ability.extra) ^ (context.other_consumeable.ability.immutable.overflow_amount or 1),
+                message_card = context.other_consumeable,
+            }
+        end
+    end,
+})

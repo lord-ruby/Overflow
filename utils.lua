@@ -59,11 +59,12 @@ function Overflow.set_amount(card, amount)
         if to_big(amount) < to_big(1e100) then
             amount = to_number(amount)
         end
-        card.ability.overflow_amount = amount
-        if to_big(card.ability.overflow_amount) < to_big(1e100) then
-            card.ability.overflow_amount = to_number(card.ability.overflow_amount)
+        if not card.ability.immutable then card.ability.immutable = {} end
+        card.ability.immutable.overflow_amount = amount
+        if to_big(card.ability.immutable.overflow_amount) < to_big(1e100) then
+            card.ability.immutable.overflow_amount = to_number(card.ability.immutable.overflow_amount)
         end
-        card.ability.overflow_amount_text = amount and number_format(amount) or "s"
+        card.ability.immutable.overflow_amount_text = amount and number_format(amount) or "s"
         card:set_cost()
         card:create_overflow_ui()
     end
