@@ -19,21 +19,21 @@ function Overflow.can_bulk_use(card)
     return card.config.center.can_bulk_use or Overflow.bulk_use_functions[card.config.center.key]
 end
 
-function Overflow.can_merge(self, card)
+function Overflow.can_merge(self, card, bypass)
     if not card then
         if Overflow.config.only_stack_negatives then
             if not self.edition or self.edition.key ~= "e_negative" then
                 return 
             else    
                 local v, i = Overflow.TableMatches(G.consumeables.cards, function(v, i)
-                    return v.config.center.key == self.config.center.key and v.edition and v.edition.key == "e_negative" and v ~= self
+                    return v.config.center.key == self.config.center.key and v.edition and v.edition.key == "e_negative" and (v ~= self or bypass)
                 end)
                 return v
             end
         else
             local v, i = Overflow.TableMatches(G.consumeables.cards, function(v, i)
                 if (not v.edition and not self.edition) or (v.edition and self.edition and v.edition.key == self.edition.key) then
-                    return v.config.center.key == self.config.center.key and v ~= self
+                    return v.config.center.key == self.config.center.key and (v ~= self or bypass)
                 end
             end)
             return v
@@ -43,11 +43,11 @@ function Overflow.can_merge(self, card)
             if not self.edition or self.edition.key ~= "e_negative" then
                 return 
             else 
-                return card.config.center.key == self.config.center.key and card.edition and card.edition.key == "e_negative" and v ~= self
+                return card.config.center.key == self.config.center.key and card.edition and card.edition.key == "e_negative" and (v ~= self or bypass)
             end
         else
             if (not card.edition and not self.edition) or (card.edition and self.edition and card.edition.key == self.edition.key) then
-                return card.config.center.key == self.config.center.key and card ~= self
+                return card.config.center.key == self.config.center.key and (card ~= self or bypass)
             end
         end
     end
@@ -65,5 +65,19 @@ function Overflow.set_amount(card, amount)
         card.ability.overflow_amount_text = amount and number_format(amount) or "s"
         card:set_cost()
         card:create_overflow_ui()
+    end
+end
+
+function Overflow.weighted_random(pool, pseudoseed)
+    local poolsize = 0
+    for k,v in pairs(pool) do
+       poolsize = poolsize + v[1]
+    end
+    local selection = pseudorandom(pseudoseed, 1, poolsize)
+    for k,v in pairs(pool) do
+       selection = selection - v[1] 
+       if (selection <= 0) then
+          return v[2]
+       end
     end
 end
