@@ -153,3 +153,7 @@ SMODS.Voucher:take_ownership('observatory', {
         end
     end,
 })
+
+if not to_big then
+    to_big = function(num) return num end
+end
