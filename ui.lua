@@ -199,6 +199,44 @@ function Card:highlight(is_highlighted)
                     parent = self
                 }
             }
+            self.children.merge_all = UIBox {
+                definition = {
+                    n = G.UIT.ROOT,
+                    config = {
+                        minh = 0.3,
+                        maxh = 0.5,
+                        minw = 0.4,
+                        maxw = 4,
+                        r = 0.08,
+                        padding = 0.1,
+                        align = 'cm',
+                        colour = G.C.DARK_EDITION,
+                        shadow = true,
+                        button = 'merge_all',
+                        func = 'can_merge_all',
+                        ref_table = self
+                    },
+                    nodes = {
+                        {
+                            n = G.UIT.T,
+                            config = {
+                                text = localize("k_merge_all"),
+                                scale = 0.3,
+                                colour = G.C.UI.TEXT_LIGHT
+                            }
+                        }
+                    }
+                },
+                config = {
+                    align = 'bmi',
+                    offset = {
+                        x = 0,
+                        y = y + 2
+                    },
+                    bond = 'Strong',
+                    parent = self
+                }
+            }
         end
     else    
         if is_highlighted and Overflow.can_merge(self) then
@@ -240,6 +278,44 @@ function Card:highlight(is_highlighted)
                     parent = self
                 }
             }
+            self.children.merge_all = UIBox {
+                definition = {
+                    n = G.UIT.ROOT,
+                    config = {
+                        minh = 0.3,
+                        maxh = 0.5,
+                        minw = 0.4,
+                        maxw = 4,
+                        r = 0.08,
+                        padding = 0.1,
+                        align = 'cm',
+                        colour = G.C.DARK_EDITION,
+                        shadow = true,
+                        button = 'merge_all',
+                        func = 'can_merge_all',
+                        ref_table = self
+                    },
+                    nodes = {
+                        {
+                            n = G.UIT.T,
+                            config = {
+                                text = localize("k_merge_all"),
+                                scale = 0.3,
+                                colour = G.C.UI.TEXT_LIGHT
+                            }
+                        }
+                    }
+                },
+                config = {
+                    align = 'bmi',
+                    offset = {
+                        x = 0,
+                        y = 0.8
+                    },
+                    bond = 'Strong',
+                    parent = self
+                }
+            }
         else
             if self.children.bulk_use then 
                 self.children.bulk_use:remove()
@@ -256,6 +332,10 @@ function Card:highlight(is_highlighted)
             if self.children.merge then 
                 self.children.merge:remove()
                 self.children.merge = nil
+            end
+            if self.children.merge_all then 
+                self.children.merge_all:remove()
+                self.children.merge_all = nil
             end
         end
     end
@@ -358,6 +438,40 @@ G.FUNCS.split_half = function(e)
     new_card:add_to_deck()
     new_card.ability.split = true
     G.consumeables:emplace(new_card)
+end
+
+G.FUNCS.can_merge_all = function(e)
+	local card = e.config.ref_table
+    local count = 0
+    for i, v in ipairs(G.consumeables.cards) do
+        if v ~= card and v.config.center.key == card.config.center.key then count = count + 1 end
+    end
+	if Overflow.can_merge(card) and count > 1 then
+        e.config.colour = G.C.SECONDARY_SET[card.config.center.set]
+        e.config.button = 'merge_all'
+		e.states.visible = true
+	else
+        e.config.colour = G.C.UI.BACKGROUND_INACTIVE
+        e.config.button = nil
+		e.states.visible = false
+	end
+end
+
+G.FUNCS.merge_all = function(e)
+	local card = e.config.ref_table
+    for i, v in ipairs(G.consumeables.cards) do
+        if Overflow.can_merge(v, card) and card ~= v then
+            v:start_dissolve()
+            Overflow.set_amount(card, (v.ability.immutable.overflow_amount or 1) + (card.ability.immutable.overflow_amount or 1))
+        end
+    end
+    G.E_MANAGER:add_event(Event({
+        trigger = 'after',
+        func = function()
+            card:create_overflow_ui()
+            return true
+        end
+    }))
 end
 
 local overflowConfigTab = function()
