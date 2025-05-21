@@ -1,7 +1,7 @@
 --automatically stack consumables
 local emplace_ref = CardArea.emplace
 function CardArea:emplace(card, ...)
-    if self ~= G.consumeables or card.config.center.set == "Joker" or card.ability.split or Overflow.is_blacklisted(card) then 
+    if self ~= G.consumeables or card.config.center.set == "Joker" or card.ability.split or Overflow.is_blacklisted(card) or not G.consumeables.cards then
         emplace_ref(self, card, ...)
     else
         if not card.ability.immutable then card.ability.immutable = {} end
@@ -40,7 +40,7 @@ end
 
 local set_editionref = Card.set_edition
 function Card:set_edition(edition, ...)
-    if self.area ~= G.consumeables or self.config.center.set == "Joker" or self.ability.split or Overflow.is_blacklisted(self) then
+    if self.area ~= G.consumeables or self.config.center.set == "Joker" or self.ability.split or Overflow.is_blacklisted(self) or not G.consumeables.cards then
         set_editionref(self, edition, ...)
     else
         if not self.ability.immutable then self.ability.immutable = {} end
