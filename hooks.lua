@@ -34,6 +34,7 @@ function CardArea:emplace(card, ...)
                 emplace_ref(self, card, ...)
             end
         end
+        G.consumeables.config.card_count = G.consumeables.config.card_count + (card.ability.immutable.overflow_amount or 1)
     end
 end
 
