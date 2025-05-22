@@ -79,9 +79,11 @@ end
 local use_cardref = G.FUNCS.use_card
 G.FUNCS.use_card = function(e, mute, nosave)
     local card = e.config.ref_table
-    
+    local mod = G.GAME.modifiers.entr_twisted
+    G.GAME.modifiers.entr_twisted = nil
     if card.ability and card.ability.immutable and card.ability.immutable.overflow_amount and to_big(card.ability.immutable.overflow_amount) > to_big(1) and card.area == G.consumeables then
         local new_card = copy_card(card)
+        G.GAME.modifiers.entr_twisted = mod
         use_cardref(e, mute, nosave)
         G.E_MANAGER:add_event(Event({
             trigger = 'after',
@@ -94,6 +96,7 @@ G.FUNCS.use_card = function(e, mute, nosave)
             end
         }))
     else
+        G.GAME.modifiers.entr_twisted = mod
         use_cardref(e, mute, nosave)
     end
 end
