@@ -15,6 +15,7 @@ function CardArea:emplace(card, ...)
                 if v then
                     Overflow.set_amount(v, (v.ability.immutable.overflow_amount or 1) + (card.ability.immutable.overflow_amount or 1))
                     card.states.visible = false
+                    card.ability.bypass_aleph = true
                     card:start_dissolve()
                 else
                     emplace_ref(self, card, ...)
@@ -29,6 +30,7 @@ function CardArea:emplace(card, ...)
             if v then
                 Overflow.set_amount(v, (v.ability.immutable.overflow_amount or 1) + (card.ability.immutable.overflow_amount or 1))
                 card.states.visible = false
+                card.ability.bypass_aleph = true
                 card:start_dissolve()
             else
                 emplace_ref(self, card, ...)
@@ -54,6 +56,7 @@ function Card:set_edition(edition, ...)
                 if v then
                     Overflow.set_amount(v, (v.ability.immutable.overflow_amount or 1) + (self.ability.immutable.overflow_amount or 1))
                     self.states.visible = false
+                    self.ability.bypass_aleph = true
                     self:start_dissolve()
                 else
                     set_editionref(self, edition, ...)
@@ -68,6 +71,7 @@ function Card:set_edition(edition, ...)
             if v then
                 Overflow.set_amount(v, (v.ability.immutable.overflow_amount or 1) + (self.ability.immutable.overflow_amount or 1))
                 self.states.visible = false
+                self.ability.bypass_aleph = true
                 self:start_dissolve()
             else
                 set_editionref(self, edition, ...)
@@ -84,6 +88,7 @@ G.FUNCS.use_card = function(e, mute, nosave)
     if card.ability and card.ability.immutable and card.ability.immutable.overflow_amount and to_big(card.ability.immutable.overflow_amount) > to_big(1) and card.area == G.consumeables then
         local new_card = copy_card(card)
         G.GAME.modifiers.entr_twisted = mod
+        card.ability.bypass_aleph = true
         use_cardref(e, mute, nosave)
         G.E_MANAGER:add_event(Event({
             trigger = 'after',
@@ -97,6 +102,7 @@ G.FUNCS.use_card = function(e, mute, nosave)
         }))
     else
         G.GAME.modifiers.entr_twisted = mod
+        card.ability.bypass_aleph = true
         use_cardref(e, mute, nosave)
     end
 end
@@ -123,6 +129,7 @@ function copy_card(other, new_card, card_scale, playing_card, strip_edition, don
             Overflow.set_amount(other, to_big((other.ability.immutable.overflow_amount or 1)) * 2) 
             if not new_card2.ability.immutable then new_card2.ability.immutable = {} end
             new_card2.ability.immutable.overflow_amount = 0
+            new_card2.ability.bypass_aleph = true
             new_card2:start_dissolve()
             return new_card2
         end

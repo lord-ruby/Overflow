@@ -359,6 +359,7 @@ G.FUNCS.bulk_use = function(e)
 	local card = e.config.ref_table
     card.ability.overflow_used_amount = card.ability.immutable.overflow_amount
     Overflow.set_amount(card, nil)
+    card.ability.bypass_aleph = true
     G.FUNCS.use_card(e, false, true)
 end
 
@@ -403,6 +404,7 @@ G.FUNCS.merge = function(e)
     local v = Overflow.can_merge(card)
     if v then
         Overflow.set_amount(v, (v.ability.immutable.overflow_amount or 1) + (card.ability.immutable.overflow_amount or 1))
+        card.ability.bypass_aleph = true
         card:start_dissolve()
         G.E_MANAGER:add_event(Event({
             trigger = 'after',
@@ -461,6 +463,7 @@ G.FUNCS.merge_all = function(e)
 	local card = e.config.ref_table
     for i, v in ipairs(G.consumeables.cards) do
         if Overflow.can_merge(v, card) and card ~= v then
+            v.ability.bypass_aleph = true
             v:start_dissolve()
             Overflow.set_amount(card, (v.ability.immutable.overflow_amount or 1) + (card.ability.immutable.overflow_amount or 1))
         end
