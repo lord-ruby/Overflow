@@ -24,6 +24,24 @@ Overflow.bulk_use_functions = {
         end
         update_hand_text({sound = 'button', volume = 0.7, pitch = 1.1, delay = 0}, {mult = 0, chips = 0, handname = '', level = ''})
     end,
+    c_temperance = function(self, _, _, amount)
+        G.E_MANAGER:add_event(Event({trigger = 'after', delay = 0.4, func = function()
+            play_sound('timpani')
+            used_tarot:juice_up(0.3, 0.5)
+            ease_dollars(self.ability.money * (amount or 1), true)
+            return true end }))
+        delay(0.6)
+    end,
+    c_hermit = function(self, _, _, amount)
+        local num = 1
+        num = num * to_big(2) ^ to_big(amount)
+        G.E_MANAGER:add_event(Event({trigger = 'after', delay = 0.4, func = function()
+            play_sound('timpani')
+            used_tarot:juice_up(0.3, 0.5)
+            ease_dollars(math.max(0,math.min(G.GAME.dollars*num, self.ability.extra*num)), true)
+            return true end }))
+        delay(0.6)
+    end
 }
 for i, v in pairs(G.P_CENTERS) do
     if v.set == "Planet" and not v.original_mod then
