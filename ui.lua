@@ -45,7 +45,7 @@ end
 local highlight_ref = Card.highlight
 function Card:highlight(is_highlighted)
     if self.area == G.consumeables and self.config.center.set ~= "Joker" and is_highlighted and self.ability.immutable.overflow_amount and to_big(self.ability.immutable.overflow_amount) > to_big(1) then
-        local y = Overflow.can_bulk_use(self) and 0.3 or 0
+        local y = Overflow.can_bulk_use(self) and 0.45 or 0
         self.children.bulk_use = UIBox {
             definition = {
                 n = G.UIT.ROOT,
@@ -183,7 +183,7 @@ function Card:highlight(is_highlighted)
                             n = G.UIT.T,
                             config = {
                                 text = localize("k_merge"),
-                                scale = 0.3,
+                                scale = 0.45,
                                 colour = G.C.UI.TEXT_LIGHT
                             }
                         }
