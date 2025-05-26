@@ -16,7 +16,7 @@ end
 function Overflow.can_bulk_use(card)
     if type(card.config.center.can_bulk_use) == "boolean" then return card.config.center.can_bulk_use end
     if type(card.config.center.can_bulk_use) == "function" then return card.config.center:can_bulk_use(card) end
-    return card.config.center.can_bulk_use or Overflow.bulk_use_functions[card.config.center.key]
+    return card.config.center.can_bulk_use or Overflow.bulk_use_functions[card.config.center.key] or card.config.center.bulk_use
 end
 
 function Overflow.can_merge(self, card, bypass, ignore_area)

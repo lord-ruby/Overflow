@@ -46,44 +46,46 @@ local highlight_ref = Card.highlight
 function Card:highlight(is_highlighted)
     if self.area == G.consumeables and self.config.center.set ~= "Joker" and is_highlighted and self.ability.immutable.overflow_amount and to_big(self.ability.immutable.overflow_amount) > to_big(1) then
         local y = Overflow.can_bulk_use(self) and 0.45 or 0
-        self.children.bulk_use = UIBox {
-            definition = {
-                n = G.UIT.ROOT,
-                config = {
-                    minh = 0.3,
-                    maxh = 0.5,
-                    minw = 0.4,
-                    maxw = 4,
-                    r = 0.08,
-                    padding = 0.1,
-                    align = 'cm',
-                    colour = G.C.DARK_EDITION,
-                    shadow = true,
-                    button = 'bulk_use',
-                    func = 'can_bulk_use',
-                    ref_table = self
-                },
-                nodes = {
-                    {
-                        n = G.UIT.T,
-                        config = {
-                            text = localize("k_bulk_use"),
-                            scale = 0.3,
-                            colour = G.C.UI.TEXT_LIGHT
+        if  Overflow.can_bulk_use(self) then
+            self.children.bulk_use = UIBox {
+                definition = {
+                    n = G.UIT.ROOT,
+                    config = {
+                        minh = 0.3,
+                        maxh = 0.5,
+                        minw = 0.4,
+                        maxw = 4,
+                        r = 0.08,
+                        padding = 0.1,
+                        align = 'cm',
+                        colour = G.C.DARK_EDITION,
+                        shadow = true,
+                        button = 'bulk_use',
+                        func = 'can_bulk_use',
+                        ref_table = self
+                    },
+                    nodes = {
+                        {
+                            n = G.UIT.T,
+                            config = {
+                                text = localize("k_bulk_use"),
+                                scale = 0.3,
+                                colour = G.C.UI.TEXT_LIGHT
+                            }
                         }
                     }
-                }
-            },
-            config = {
-                align = 'bmi',
-                offset = {
-                    x = 0,
-                    y = y
                 },
-                bond = 'Strong',
-                parent = self
+                config = {
+                    align = 'bmi',
+                    offset = {
+                        x = 0,
+                        y = y
+                    },
+                    bond = 'Strong',
+                    parent = self
+                }
             }
-        }
+        end
         self.children.split_one = UIBox {
             definition = {
                 n = G.UIT.ROOT,
