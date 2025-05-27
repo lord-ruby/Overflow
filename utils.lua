@@ -87,5 +87,5 @@ end
 
 function Overflow.is_blacklisted(card)
     if not card then return false end
-    return Overflow.blacklist[card.config.center.key] or Overflow.blacklist[card.config.center.set] or card.base.suit
+    return Overflow.blacklist[card.config.center.key] or Overflow.blacklist[card.config.center.set] or (card.base and card.base.suit)
 end
