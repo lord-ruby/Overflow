@@ -32,16 +32,24 @@ SMODS.Joker:take_ownership("j_perkeo", {
                 end
                 local card = Overflow.weighted_random(cards, "perkeo")
                 if card.config.center.set == "Joker" then
-                    G.E_MANAGER:add_event(Event({
-                        func = function() 
-                            local new_card = copy_card(card, nil)
-                            new_card.ability.immutable.overflow_amount = 1
-                            new_card:set_edition("e_negative", true)
-                            new_card:add_to_deck()
-                            G.consumeables:emplace(new_card) 
-                            return true
-                        end
-                    }))
+                    if not Talisman or not Talisman.config_file.disable_anims then
+                        G.E_MANAGER:add_event(Event({
+                            func = function() 
+                                local new_card = copy_card(card, nil)
+                                new_card.ability.immutable.overflow_amount = 1
+                                new_card:set_edition("e_negative", true)
+                                new_card:add_to_deck()
+                                G.consumeables:emplace(new_card) 
+                                return true
+                            end
+                        }))
+                    else    
+                        local new_card = copy_card(card, nil)
+                        new_card.ability.immutable.overflow_amount = 1
+                        new_card:set_edition("e_negative", true)
+                        new_card:add_to_deck()
+                        G.consumeables:emplace(new_card)
+                    end
                 else
                     if card.ability.immutable.overflow_amount and Overflow.can_merge(card, card, true) then
                         if not Talisman or not Talisman.config_file.disable_anims then
@@ -76,20 +84,30 @@ SMODS.Joker:take_ownership("j_perkeo", {
                             end
                         end
                         if not check then
-                            G.E_MANAGER:add_event(Event({
-                                func = function() 
-                                    local new_card = copy_card(card, nil)
-                                    new_card.ability.immutable.overflow_amount = 1
-                                    new_card:set_edition("e_negative", true)
-                                    new_card:add_to_deck()
-                                    G.consumeables:emplace(new_card) 
-                                    return true
-                                end
-                            }))
+                            if not Talisman or not Talisman.config_file.disable_anims then
+                                G.E_MANAGER:add_event(Event({
+                                    func = function() 
+                                        local new_card = copy_card(card, nil)
+                                        new_card.ability.immutable.overflow_amount = 1
+                                        new_card:set_edition("e_negative", true)
+                                        new_card:add_to_deck()
+                                        G.consumeables:emplace(new_card) 
+                                        return true
+                                    end
+                                }))
+                            else    
+                                local new_card = copy_card(card, nil)
+                                new_card.ability.immutable.overflow_amount = 1
+                                new_card:set_edition("e_negative", true)
+                                new_card:add_to_deck()
+                                G.consumeables:emplace(new_card)
+                            end
                         end
                     end
                 end
-                card_eval_status_text(context.blueprint_card or orig_card, 'extra', nil, nil, nil, {message = localize('k_duplicated_ex')})
+                if not Talisman or not Talisman.config_file.disable_anims then
+                    card_eval_status_text(context.blueprint_card or orig_card, 'extra', nil, nil, nil, {message = localize('k_duplicated_ex')})
+                end
                 return {calculated = true}
             end
         end
