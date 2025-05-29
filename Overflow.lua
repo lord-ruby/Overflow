@@ -22,6 +22,7 @@ SMODS.Atlas {
 
 SMODS.Joker:take_ownership("j_perkeo", {
     demicoloncompat = true,
+    name = "Perkeo (Overflow)",
     calculate = function(self, orig_card, context)
         if context.ending_shop or context.forcetrigger then
             if G.consumeables.cards[1] then
