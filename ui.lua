@@ -362,6 +362,10 @@ G.FUNCS.bulk_use = function(e)
     card.ability.overflow_used_amount = card.ability.immutable.overflow_amount
     Overflow.set_amount(card, nil)
     card.ability.bypass_aleph = true
+    if card.children.overflow_ui then
+        card.children.overflow_ui:remove()
+        card.children.overflow_ui = nil 
+    end
     G.FUNCS.use_card(e, false, true)
 end
 
