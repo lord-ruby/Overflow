@@ -44,29 +44,33 @@ SMODS.Joker:take_ownership("j_perkeo", {
                     }))
                 else
                     if card.ability.immutable.overflow_amount and Overflow.can_merge(card, card, true) then
-                        Overflow.set_amount(card, card.ability.immutable.overflow_amount + 1)
                         if not Talisman or not Talisman.config_file.disable_anims then
                             G.E_MANAGER:add_event(Event({
                                 func = function() 
                                     play_sound('negative', 1.5, 0.4)
+                                    Overflow.set_amount(card, card.ability.immutable.overflow_amount + 1)
                                     card:juice_up()
                                     return true
                                 end
                             }))
+                        else
+                            Overflow.set_amount(card, card.ability.immutable.overflow_amount + 1)
                         end
                     else
                         local check
                         for i, v in ipairs(G.consumeables.cards) do
                             if v.edition and v.edition.key == "e_negative" and v.config.center.key == card.config.center.key and v ~= card then
-                                Overflow.set_amount(v, (v.ability.immutable.overflow_amount or 1) + 1)
                                 if not Talisman or not Talisman.config_file.disable_anims then
                                     G.E_MANAGER:add_event(Event({
                                         func = function() 
                                             play_sound('negative', 1.5, 0.4)
                                             v:juice_up()
+                                            Overflow.set_amount(v, (v.ability.immutable.overflow_amount or 1) + 1)
                                             return true
                                         end
                                     }))
+                                else
+                                    Overflow.set_amount(v, (v.ability.immutable.overflow_amount or 1) + 1)
                                 end
                                 check = true
                             end
