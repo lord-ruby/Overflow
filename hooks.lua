@@ -117,7 +117,9 @@ G.FUNCS.use_card = function(e, mute, nosave)
                         trigger = 'after',
                         delay = 0.3,
                         func = function()
-                            card:create_overflow_ui()
+                            if to_big(card.ability.immutable.overflow_amount or 0) > to_big(0) then
+                                card:create_overflow_ui()
+                            end
                             return true
                         end
                     }))
@@ -134,7 +136,9 @@ G.FUNCS.use_card = function(e, mute, nosave)
             trigger = 'after',
             delay = 0.3,
             func = function()
-                card:create_overflow_ui()
+                if to_big(card.ability.immutable.overflow_amount or 0) > to_big(0) then
+                    card:create_overflow_ui()
+                end
                 return true
             end
         }))
