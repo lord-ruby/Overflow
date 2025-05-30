@@ -89,7 +89,8 @@ G.FUNCS.use_card = function(e, mute, nosave)
         card.children.overflow_ui:remove()
         card.children.overflow_ui = nil 
     end
-    if card.ability and card.ability.immutable and card.ability.immutable.overflow_amount and to_big(card.ability.immutable.overflow_amount) > to_big(1) and card.area == G.consumeables then
+    if card.ability and card.ability.immutable and card.ability.immutable.overflow_amount and to_big(card.ability.immutable.overflow_amount) > to_big(1) and card.area == G.consumeables and (not card.ability.cry_multiuse or to_big(card.ability.cry_multiuse) <= to_big(1)) then
+        card.ability.cry_multiuse = nil
         local new_card = copy_card(card)
         G.GAME.modifiers.entr_twisted = mod
         card.ability.bypass_aleph = true
@@ -107,6 +108,17 @@ G.FUNCS.use_card = function(e, mute, nosave)
     else
         G.GAME.modifiers.entr_twisted = mod
         card.ability.bypass_aleph = true
+        if not (not card.ability.cry_multiuse or to_big(card.ability.cry_multiuse) < to_big(0)) then
+            G.E_MANAGER:add_event(Event({
+                trigger = 'after',
+                delay = 0.3,
+                func = function()
+                    Overflow.set_amount(card, card.ability.immutable.overflow_amount - 1)
+                    card:create_overflow_ui()
+                    return true
+                end
+            }))
+        end
         use_cardref(e, mute, nosave)
     end
 end
