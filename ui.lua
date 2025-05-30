@@ -185,7 +185,7 @@ function Card:highlight(is_highlighted)
                             n = G.UIT.T,
                             config = {
                                 text = localize("k_merge"),
-                                scale = 0.45,
+                                scale = 0.3,
                                 colour = G.C.UI.TEXT_LIGHT
                             }
                         }
