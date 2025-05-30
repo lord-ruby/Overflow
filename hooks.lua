@@ -203,7 +203,7 @@ SMODS.Voucher:take_ownership('observatory', {
     end,
 })
 
-if not to_big or to_number then
+if not SMODS.Mods.Talisman or not SMODS.Mods.Talisman.can_load then
     to_big = function(num) return num end
     to_number = function(num) return num end
 end

@@ -7,7 +7,7 @@
     "prefix": "ovrf",
     "author": ["Ruby"],
     "main_file": "Overflow.lua",
-    "priority": 1000,
+    "priority": 10,
     "badge_colour": "FE0001",
     "dependencies": [
     ],
