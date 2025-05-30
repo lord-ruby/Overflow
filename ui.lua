@@ -1,7 +1,7 @@
 --manage buttons for the consumables
 function Card:create_overflow_ui()
     if not self.ability.immutable then self.ability.immutable = {} end
-    if self.ability.immutable.overflow_amount and to_big(self.ability.immutable.overflow_amount) == to_big(1) then
+    if self.ability.immutable.overflow_amount and (to_big(self.ability.immutable.overflow_amount) == to_big(1) or to_big(self.ability.immutable.overflow_amount) == to_big(0)) then
         self.ability.immutable.overflow_amount = nil
     end
     if self.ability.immutable.overflow_amount then
