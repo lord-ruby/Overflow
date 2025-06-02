@@ -89,3 +89,11 @@ function Overflow.is_blacklisted(card)
     if not card then return false end
     return Overflow.blacklist[card.config.center.key] or Overflow.blacklist[card.config.center.set] or (card.base and card.base.suit)
 end
+
+function CardArea:get_total_count()
+    local total = 0
+    for i, v in ipairs(self.cards) do
+        total = total + (v and v.ability and v.ability.immutable and v.ability.immutable.overflow_amount or 1)
+    end
+    return total
+end
