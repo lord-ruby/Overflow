@@ -33,6 +33,7 @@ function Card:create_overflow_ui()
             self.children.overflow_ui:remove()
             self.children.overflow_ui = nil 
         end
+        self.ability.immutable.overflow_amount = nil
     end
 end
 
