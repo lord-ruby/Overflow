@@ -3,6 +3,10 @@ local emplace_ref = CardArea.emplace
 function CardArea:emplace(card, ...)
     if self ~= G.consumeables or card.config.center.set == "Joker" or card.ability.split or Overflow.is_blacklisted(card) or not G.consumeables then
         emplace_ref(self, card, ...)
+        if card.children.overflow_ui then
+            card.children.overflow_ui:remove()
+            card.children.overflow_ui = nil 
+        end
     else
         if not card.ability.immutable then card.ability.immutable = {} end
         if Overflow.config.only_stack_negatives then
