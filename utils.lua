@@ -100,6 +100,7 @@ end
 
 function Overflow.can_mass_use(set, area) 
     local total = 0
+    if area == G.pack_cards or area == G.shop_jokers or area == G.shop_booster or area == G.shop_vouchhers then return nil end
     for i, v in pairs(area) do
         if v.config.center.set == set then total = total + 1 end
     end
