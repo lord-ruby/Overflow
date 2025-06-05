@@ -26,11 +26,23 @@ SMODS.Joker:take_ownership("j_perkeo", {
     calculate = function(self, orig_card, context)
         if context.ending_shop or context.forcetrigger then
             if G.consumeables.cards[1] then
-                local cards = {}
-                for i, v in ipairs(G.consumeables.cards) do
-                    cards[#cards+1] = {(v.ability.immutable.overflow_amount or 1), v}
+                local card
+                if G.consumeables:get_total_count() < 100 then
+                    local cards = {}
+                    for i, v in ipairs(G.consumeables.cards) do
+                        for k = 1, (v.ability.immutable.overflow_amount or 1) do
+                            cards[#cards+1] = v
+                        end
+                    end
+                    card = pseudorandom_element(G.consumeables.cards, pseudoseed('perkeo'))
+                else
+                    local cards = {}
+                    for i, v in ipairs(G.consumeables.cards) do
+                        cards[#cards+1] = {(v.ability.immutable.overflow_amount or 1), v}
+                    end
+                    card = Overflow.weighted_random(cards, "perkeo")
                 end
-                local card = Overflow.weighted_random(cards, "perkeo")
+                
                 if card.config.center.set == "Joker" then
                     if not Talisman or not Talisman.config_file.disable_anims then
                         G.E_MANAGER:add_event(Event({
