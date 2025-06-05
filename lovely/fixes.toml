@@ -91,6 +91,9 @@ Overflow = {}
 Overflow.blacklist = {
 
 }
+Overflow.mass_use_sets = {
+    Planet = true
+}
 '''
 match_indent = true
 

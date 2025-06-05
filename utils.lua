@@ -97,3 +97,11 @@ function CardArea:get_total_count()
     end
     return total
 end
+
+function Overflow.can_mass_use(set, area) 
+    local total = 0
+    for i, v in pairs(area) do
+        if v.config.center.set == set then total = total + 1 end
+    end
+    return total
+end

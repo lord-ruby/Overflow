@@ -92,6 +92,47 @@ function Card:highlight(is_highlighted)
                 }
             }
         end
+        if Overflow.mass_use_sets[self.config.center.set] then
+            self.children.mass_use = UIBox {
+                definition = {
+                    n = G.UIT.ROOT,
+                    config = {
+                        minh = 0.3,
+                        maxh = 0.5,
+                        minw = 0.4,
+                        maxw = 4,
+                        r = 0.08,
+                        padding = 0.1,
+                        align = 'cm',
+                        colour = G.C.DARK_EDITION,
+                        shadow = true,
+                        button = 'mass_use',
+                        func = 'can_mass_use',
+                        ref_table = self
+                    },
+                    nodes = {
+                        {
+                            n = G.UIT.T,
+                            config = {
+                                text = localize("k_mass_use"),
+                                scale = 0.3,
+                                colour = G.C.UI.TEXT_LIGHT
+                            }
+                        }
+                    }
+                },
+                config = {
+                    align = 'bmi',
+                    offset = {
+                        x = 0,
+                        y = y+0.5
+                    },
+                    bond = 'Strong',
+                    parent = self
+                }
+            }
+            y = y + 0.5
+        end
         self.children.split_one = UIBox {
             definition = {
                 n = G.UIT.ROOT,
@@ -246,7 +287,54 @@ function Card:highlight(is_highlighted)
                 }
             }
         end
-    else    
+    else  
+        local y = 0.3
+        if is_highlighted and Overflow.mass_use_sets[self.config.center.set] then
+            self.children.mass_use = UIBox {
+                definition = {
+                    n = G.UIT.ROOT,
+                    config = {
+                        minh = 0.3,
+                        maxh = 0.5,
+                        minw = 0.4,
+                        maxw = 4,
+                        r = 0.08,
+                        padding = 0.1,
+                        align = 'cm',
+                        colour = G.C.DARK_EDITION,
+                        shadow = true,
+                        button = 'mass_use',
+                        func = 'can_mass_use',
+                        ref_table = self
+                    },
+                    nodes = {
+                        {
+                            n = G.UIT.T,
+                            config = {
+                                text = localize("k_mass_use"),
+                                scale = 0.3,
+                                colour = G.C.UI.TEXT_LIGHT
+                            }
+                        }
+                    }
+                },
+                config = {
+                    align = 'bmi',
+                    offset = {
+                        x = 0,
+                        y = y
+                    },
+                    bond = 'Strong',
+                    parent = self
+                }
+            }
+            y = y + 0.5
+        else
+            if self.children.mass_use then 
+                self.children.mass_use:remove()
+                self.children.mass_use = nil
+            end 
+        end
         if is_highlighted and Overflow.can_merge(self) then
             self.children.merge = UIBox {
                 definition = {
@@ -270,7 +358,7 @@ function Card:highlight(is_highlighted)
                             n = G.UIT.T,
                             config = {
                                 text = localize("k_merge"),
-                                scale = 0.3,
+                                scale = y+0.5,
                                 colour = G.C.UI.TEXT_LIGHT
                             }
                         }
@@ -280,7 +368,7 @@ function Card:highlight(is_highlighted)
                     align = 'bmi',
                     offset = {
                         x = 0,
-                        y = 0.3
+                        y = y
                     },
                     bond = 'Strong',
                     parent = self
@@ -318,7 +406,7 @@ function Card:highlight(is_highlighted)
                     align = 'bmi',
                     offset = {
                         x = 0,
-                        y = 0.8
+                        y = y + 0.5
                     },
                     bond = 'Strong',
                     parent = self
@@ -488,6 +576,52 @@ G.FUNCS.merge_all = function(e)
         end
     }))
 end
+
+
+G.FUNCS.can_mass_use = function(e)
+	local card = e.config.ref_table
+    e.config.colour = G.C.SECONDARY_SET[card.config.center.set]
+    e.config.button = 'mass_use'
+    e.states.visible = true
+end
+
+G.FUNCS.mass_use = function(e)
+	local card = e.config.ref_table
+    card.mass_use = true
+    card.ability.immutable.overflow_amount = card.ability.immutable.overflow_amount or 1
+    G.FUNCS.bulk_use(e)
+end
+
+local use_cardref = G.FUNCS.use_card
+G.FUNCS.use_card = function(e)
+    local card = e.config.ref_table
+    local area = card.area
+    use_cardref(e)
+    if card.mass_use then
+        local c
+        for i, v in ipairs(area.cards) do
+            if v.config.center.set == card.config.center.set then c = v end
+        end
+        if c then
+            c.mass_use = true
+            c.ability.immutable.overflow_amount = c.ability.immutable.overflow_amount or 1
+            G.E_MANAGER:add_event(Event({
+                trigger = 'after',
+                func = function()
+                    G.E_MANAGER:add_event(Event({ --why must you forsake me like this
+                        trigger = 'after',
+                        func = function()
+                            G.FUNCS.bulk_use{config = {ref_table = c}}
+                            return true
+                        end
+                    }))
+                    return true
+                end
+            }))
+        end
+    end
+end
+
 
 local overflowConfigTab = function()
 	ovrf_nodes = {
