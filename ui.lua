@@ -92,7 +92,7 @@ function Card:highlight(is_highlighted)
                 }
             }
         end
-        if Overflow.mass_use_sets[self.config.center.set] then
+        if Overflow.mass_use_sets[self.config.center.set] and self.area and Overflow.can_mass_use(self.config.center.set, self.area.cards) then
             self.children.mass_use = UIBox {
                 definition = {
                     n = G.UIT.ROOT,
@@ -289,7 +289,7 @@ function Card:highlight(is_highlighted)
         end
     else  
         local y = 0.3
-        if is_highlighted and Overflow.mass_use_sets[self.config.center.set] then
+        if is_highlighted and Overflow.mass_use_sets[self.config.center.set] and self.area and Overflow.can_mass_use(self.config.center.set, self.area.cards) then
             self.children.mass_use = UIBox {
                 definition = {
                     n = G.UIT.ROOT,

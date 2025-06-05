@@ -103,5 +103,5 @@ function Overflow.can_mass_use(set, area)
     for i, v in pairs(area) do
         if v.config.center.set == set then total = total + 1 end
     end
-    return total
+    return total > 1 and total or nil
 end
