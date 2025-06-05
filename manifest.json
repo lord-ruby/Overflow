@@ -1,7 +1,7 @@
 {
     "name": "Overflow",
     "id": "Overflow",
-    "version": "1.0.0",
+    "version": "1.0.4",
     "website_url": "",
     "description": "A consumable stacking system built from the ground up.",
     "prefix": "ovrf",
