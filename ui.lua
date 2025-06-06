@@ -580,9 +580,15 @@ end
 
 G.FUNCS.can_mass_use = function(e)
 	local card = e.config.ref_table
-    e.config.colour = G.C.SECONDARY_SET[card.config.center.set]
-    e.config.button = 'mass_use'
-    e.states.visible = true
+    if card.area ~= G.pack_cards and card.area ~= G.shop_jokers and card.area ~= G.shop_vouchers and card.area ~= G.shop_booster then
+        e.config.colour = G.C.SECONDARY_SET[card.config.center.set]
+        e.config.button = 'mass_use'
+        e.states.visible = true
+    else
+        e.config.colour = G.C.UI.BACKGROUND_INACTIVE
+        e.config.button = nil
+        e.states.visible = false
+    end
 end
 
 G.FUNCS.mass_use = function(e)
