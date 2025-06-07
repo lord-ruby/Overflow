@@ -358,7 +358,7 @@ function Card:highlight(is_highlighted)
                             n = G.UIT.T,
                             config = {
                                 text = localize("k_merge"),
-                                scale = y+0.5,
+                                scale = 0.3,
                                 colour = G.C.UI.TEXT_LIGHT
                             }
                         }
@@ -368,7 +368,7 @@ function Card:highlight(is_highlighted)
                     align = 'bmi',
                     offset = {
                         x = 0,
-                        y = y
+                        y = y+0.5
                     },
                     bond = 'Strong',
                     parent = self
@@ -406,7 +406,7 @@ function Card:highlight(is_highlighted)
                     align = 'bmi',
                     offset = {
                         x = 0,
-                        y = y + 0.5
+                        y = y + 1
                     },
                     bond = 'Strong',
                     parent = self
