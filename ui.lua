@@ -4,7 +4,7 @@ function Card:create_overflow_ui()
     if self.ability.immutable.overflow_amount and (to_big(self.ability.immutable.overflow_amount) == to_big(1) or to_big(self.ability.immutable.overflow_amount) == to_big(0)) then
         self.ability.immutable.overflow_amount = nil
     end
-    if self.ability.immutable.overflow_amount and self.ability.immutable.overflow_amount_text ~= "" and self.area == G.consumeables then
+    if self.ability.immutable.overflow_amount and self.ability.immutable.overflow_amount_text ~= "" and (self.area == G.consumeables or self.bypass) then
         if self.children.overflow_ui then
             self.children.overflow_ui:remove()
             self.children.overflow_ui = nil 
@@ -465,7 +465,7 @@ end
 
 G.FUNCS.can_split_one = function(e)
 	local card = e.config.ref_table
-	if to_big(card.ability.immutable.overflow_amount) > to_big(1) then
+	if to_big(card.ability.immutable.overflow_amount or 0) > to_big(1) then
         e.config.colour = G.C.SECONDARY_SET[card.config.center.set]
         e.config.button = 'split_one'
 		e.states.visible = true
@@ -477,6 +477,8 @@ G.FUNCS.can_split_one = function(e)
 end
 
 G.FUNCS.split_one = function(e)
+    local mod = G.GAME.modifiers.entr_twisted 
+    G.GAME.modifiers.entr_twisted = nil
 	local card = e.config.ref_table
     local new_card = copy_card(card)
     Overflow.set_amount(new_card, nil)
@@ -484,6 +486,7 @@ G.FUNCS.split_one = function(e)
     new_card:add_to_deck()
     new_card.ability.split = true
     G.consumeables:emplace(new_card)
+    G.GAME.modifiers.entr_twisted = mod
 end
 
 G.FUNCS.can_merge = function(e)
@@ -531,6 +534,8 @@ G.FUNCS.can_split_half = function(e)
 end
 
 G.FUNCS.split_half = function(e)
+    local mod = G.GAME.modifiers.entr_twisted 
+    G.GAME.modifiers.entr_twisted = nil
 	local card = e.config.ref_table
     local new_card = copy_card(card)
     local top_half = math.floor(card.ability.immutable.overflow_amount/2)
@@ -540,6 +545,7 @@ G.FUNCS.split_half = function(e)
     new_card:add_to_deck()
     new_card.ability.split = true
     G.consumeables:emplace(new_card)
+    G.GAME.modifiers.entr_twisted = mod
 end
 
 G.FUNCS.can_merge_all = function(e)
