@@ -222,3 +222,24 @@ if not SMODS.Mods.Talisman or not SMODS.Mods.Talisman.can_load then
     to_big = function(num) return num or -1e300 end
     to_number = function(num) return num or -1e300 end
 end
+
+
+local card_load_ref = Card.load
+function Card:load(cardTable, other_card)
+	card_load_ref(self, cardTable, other_card)
+	if self.ability then
+		self.ability.immutable = self.ability.immutable or {}
+        self.ability.immutable.overflow_amount = cardTable.overflow_amount
+        if self.ability.immutable.overflow_amount then
+            self.bypass = true
+            self:create_overflow_ui()
+            self.bypass = nil
+        end
+	end
+end
+local card_save_ref = Card.save
+function Card:save()
+    local tbl = card_save_ref(self)
+    tbl.overflow_amount = self and self.ability and self.ability.immutable and self.ability.immutable.overflow_amount
+    return tbl
+end
