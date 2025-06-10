@@ -198,7 +198,7 @@ local set_cost_ref = Card.set_cost
 function Card:set_cost()
 	set_cost_ref(self)
     if not self.ability.immutable then self.ability.immutable = {} end
-	self.sell_cost = self.sell_cost * (self.ability.immutable.overflow_amount or 1)
+	self.sell_cost = math.max(self.sell_cost * (self.ability.immutable.overflow_amount or 1), 0)
     self.sell_cost_label = self.facing == 'back' and '?' or number_format(self.sell_cost)
 end
 
