@@ -540,11 +540,17 @@ G.FUNCS.split_half = function(e)
     local new_card = copy_card(card)
     local top_half = math.floor(card.ability.immutable.overflow_amount/2)
     local bottom_half = card.ability.immutable.overflow_amount - top_half
+    new_card.bypass = true
+    card.bypass = true
     Overflow.set_amount(new_card, bottom_half)
     Overflow.set_amount(card, top_half)
     new_card:add_to_deck()
     new_card.ability.split = true
     G.consumeables:emplace(new_card)
+    new_card:create_overflow_ui()
+    card:create_overflow_ui()
+    new_card.bypass = nil
+    card.bypass = nil
     G.GAME.modifiers.entr_twisted = mod
 end
 
