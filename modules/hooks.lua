@@ -9,7 +9,7 @@ function CardArea:emplace(card, ...)
         end
     else
         if not card.ability.immutable then card.ability.immutable = {} end
-        if Overflow.config.only_stack_negatives then
+        if Overflow.config.only_stack_negatives or (MP and MP.LOBBY) then
             if not card.edition or not card.edition.negative then
                 emplace_ref(self, card, ...)
             else
@@ -50,7 +50,7 @@ function Card:set_edition(edition, ...)
         set_editionref(self, edition, ...)
     else
         if not self.ability.immutable then self.ability.immutable = {} end
-        if Overflow.config.only_stack_negatives then
+        if Overflow.config.only_stack_negatives or (MP and MP.LOBBY) then
             if (type(edition) == "string" and edition ~= "e_negative") or (type(edition) == "table" and not edition.negative) then
                 set_editionref(self, edition, ...)
             else    

@@ -653,7 +653,7 @@ Overflow.overflowConfigTab = function()
 	config = { n = G.UIT.R, config = { align = "tm", padding = 0 }, nodes = { left_settings, right_settings } }
 	ovrf_nodes[#ovrf_nodes + 1] = config
 	ovrf_nodes[#ovrf_nodes + 1] = create_toggle({
-		label = localize("k_only_stack_negatives"),
+		label = MP and localize("k_only_stack_negatives_mp") or localize("k_only_stack_negatives"),
 		active_colour = HEX("40c76d"),
 		ref_table = Overflow.config,
 		ref_value = "only_stack_negatives",
@@ -693,7 +693,7 @@ if not SMODS then
                     n = G.UIT.R,
                     nodes = {
                         create_toggle({
-                            label = localize("k_only_stack_negatives"),
+                            label = MP and localize("k_only_stack_negatives_mp") or localize("k_only_stack_negatives"),
                             active_colour = HEX("40c76d"),
                             ref_table = Overflow.config,
                             ref_value = "only_stack_negatives",
