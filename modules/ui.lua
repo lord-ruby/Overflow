@@ -484,6 +484,8 @@ G.FUNCS.split_one = function(e)
     Overflow.set_amount(new_card, nil)
     Overflow.set_amount(card, card.ability.immutable.overflow_amount - 1)
     new_card:add_to_deck()
+    card:set_cost()
+    new_card:set_cost()
     new_card.ability.split = true
     G.consumeables:emplace(new_card)
     G.GAME.modifiers.entr_twisted = mod
@@ -546,6 +548,8 @@ G.FUNCS.split_half = function(e)
     Overflow.set_amount(card, top_half)
     new_card:add_to_deck()
     new_card.ability.split = true
+    card:set_cost()
+    new_card:set_cost()
     G.consumeables:emplace(new_card)
     new_card:create_overflow_ui()
     card:create_overflow_ui()
