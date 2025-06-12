@@ -27,7 +27,7 @@ function PerkeoOverride(self, orig_card, context)
     if context.ending_shop or context.forcetrigger then
         if G.consumeables.cards[1] then
             local card
-            if G.consumeables:get_total_count() < 100 then
+            if to_big(G.consumeables:get_total_count()) < to_big(100) then
                 local cards = {}
                 for i, v in ipairs(G.consumeables.cards) do
                     for k = 1, (v.ability.immutable.overflow_amount or 1) do
