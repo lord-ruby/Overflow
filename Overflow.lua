@@ -11,6 +11,12 @@ if not SMODS then
             end
         elseif self.ability.set == "Joker" and self.ability.name == "Perkeo" then
             return PerkeoOverride(G.P_CENTERS.j_perkeo, self, context)
+        elseif self.ability.name == 'Constellation' and not context.blueprint and context.consumeable.ability.set == 'Planet' then
+            self.ability.x_mult = self.ability.x_mult + (self.ability.extra * (context.consumeable.ability.overflow_used_amount or 1))
+            G.E_MANAGER:add_event(Event({
+                func = function() card_eval_status_text(self, 'extra', nil, nil, nil, {message = localize{type='variable',key='a_xmult',vars={self.ability.x_mult}}}); return true
+                end}))
+            return
         end
         return calculate_jokerref(self, context)
     end
@@ -73,7 +79,7 @@ function PerkeoOverride(self, orig_card, context)
                 else
                     local check
                     for i, v in ipairs(G.consumeables.cards) do
-                        if v.edition and v.edition.key == "e_negative" and v.config.center.key == card.config.center.key and v ~= card then
+                        if v.edition and v.edition.negative and v.config.center.key == card.config.center.key and v ~= card then
                             if not Talisman or not Talisman.config_file.disable_anims then
                                 G.E_MANAGER:add_event(Event({
                                     func = function() 

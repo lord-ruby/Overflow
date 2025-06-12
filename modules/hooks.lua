@@ -158,6 +158,19 @@ G.FUNCS.use_card = function(e, mute, nosave)
             end
         }))
     end
+    G.E_MANAGER:add_event(Event({
+        trigger = 'after',
+        func = function()
+            G.E_MANAGER:add_event(Event({
+                trigger = 'after',
+                func = function()
+                    e.config.ref_table.ability.overflow_used_amount = nil
+                    return true
+                end
+            }))
+            return true
+        end
+    }))
 end
 
 local copy_cardref = copy_card

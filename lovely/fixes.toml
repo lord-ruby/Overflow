@@ -63,7 +63,6 @@ if to_big(amt or 1) <= to_big(1) then
 else
     Overflow.bulk_use(e.config.ref_table, area, amt)
 end
-e.config.ref_table.ability.overflow_used_amount = nil
 '''
 match_indent = true
 overwrite = false
