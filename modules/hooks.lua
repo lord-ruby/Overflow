@@ -10,11 +10,11 @@ function CardArea:emplace(card, ...)
     else
         if not card.ability.immutable then card.ability.immutable = {} end
         if Overflow.config.only_stack_negatives then
-            if not card.edition or card.edition.key ~= "e_negative" then
+            if not card.edition or not card.edition.negative then
                 emplace_ref(self, card, ...)
             else
                 local v, i = Overflow.TableMatches(self.cards, function(v, i)
-                    return v.config.center.key == card.config.center.key and v.edition and v.edition.key == "e_negative" and v ~= self
+                    return v.config.center.key == card.config.center.key and v.edition and v.edition.negative and v ~= self
                 end)
                 if v then
                     Overflow.set_amount(v, (v.ability.immutable.overflow_amount or 1) + (card.ability.immutable.overflow_amount or 1))
@@ -51,11 +51,11 @@ function Card:set_edition(edition, ...)
     else
         if not self.ability.immutable then self.ability.immutable = {} end
         if Overflow.config.only_stack_negatives then
-            if edition ~= "e_negative" then
+            if (type(edition) == "string" and edition ~= "e_negative") or (type(edition) == "table" and not edition.negative) then
                 set_editionref(self, edition, ...)
             else    
                 local v, i = Overflow.TableMatches(G.consumeables.cards, function(v, i)
-                    return v.config.center.key == self.config.center.key and v.edition and v.edition.key == "e_negative" and v ~= self
+                    return v.config.center.key == self.config.center.key and v.edition and v.edition.negative and v ~= self
                 end)
                 if v then
                     Overflow.set_amount(v, (v.ability.immutable.overflow_amount or 1) + (self.ability.immutable.overflow_amount or 1))
