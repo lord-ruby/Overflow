@@ -654,9 +654,7 @@ Overflow.overflowConfigTab = function()
 		ref_table = Overflow.config,
 		ref_value = "only_stack_negatives",
 		callback = function()
-            if not SMODS then
-                Overflow.save_config()
-            end
+            Overflow.save_config()
         end,
 	})
     ovrf_nodes[#ovrf_nodes + 1] = create_toggle({
@@ -665,9 +663,7 @@ Overflow.overflowConfigTab = function()
 		ref_table = Overflow.config,
 		ref_value = "fix_slots",
 		callback = function()
-            if not SMODS then
-                Overflow.save_config()
-            end
+            Overflow.save_config()
         end,
 	})
 	return {
