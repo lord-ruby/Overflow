@@ -135,7 +135,7 @@ pattern = '''self.config.card_count = #self.cards'''
 position = "at"
 payload = '''
 self.config.card_count = #self.cards
-if Overflow.config.fix_slots then
+if Overflow.config.fix_slots or (MP and MP.LOBBY) then
     if self == G.consumeables then
         for i, v in ipairs(self.cards) do   
             if not v.edition or not v.edition.card_limit then

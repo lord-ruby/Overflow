@@ -662,7 +662,7 @@ Overflow.overflowConfigTab = function()
         end,
 	})
     ovrf_nodes[#ovrf_nodes + 1] = create_toggle({
-		label = localize("k_fix_slots"),
+		label = MP and localize("k_fix_slots_mp") or localize("k_fix_slots"),
 		active_colour = HEX("40c76d"),
 		ref_table = Overflow.config,
 		ref_value = "fix_slots",
@@ -704,7 +704,7 @@ if not SMODS then
                             end,
                         }),
                         create_toggle({
-                            label = localize("k_fix_slots"),
+                            label = MP and localize("k_fix_slots_mp") or localize("k_fix_slots"),
                             active_colour = HEX("40c76d"),
                             ref_table = Overflow.config,
                             ref_value = "fix_slots",

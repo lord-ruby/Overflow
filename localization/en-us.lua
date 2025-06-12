@@ -8,7 +8,8 @@ return {
             k_merge_all = "MERGE ALL",
             k_mass_use = "MASS USE",
             k_only_stack_negatives = "Only stack negative consumables",
-            k_fix_slots = "Stacked non-negatives take up the correct amount of slots"
+            k_fix_slots = "Stacked non-negatives take up the correct amount of slots",
+            k_fix_slots_mp = "Stacked non-negatives take up the correct amount of slots, (Forced on when in MP Lobby)",
         }
     }
 }
