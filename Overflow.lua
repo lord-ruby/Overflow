@@ -105,6 +105,7 @@ function PerkeoOverride(self, orig_card, context)
                                     new_card:add_to_deck()
                                     new_card.ability.split = true
                                     G.consumeables:emplace(new_card) 
+                                    new_card.split = nil
                                     return true
                                 end
                             }))
@@ -115,15 +116,8 @@ function PerkeoOverride(self, orig_card, context)
                             new_card:add_to_deck()
                             new_card.ability.split = true
                             G.consumeables:emplace(new_card)
+                            new_card.split = nil
                         end
-                        G.E_MANAGER:add_event(Event({
-                            blocking = false,
-                            trigger = "after",
-                            func = function() 
-                                new_card.split = nil
-                                return true
-                            end
-                        }))
                     end
                 end
             else
@@ -133,14 +127,7 @@ function PerkeoOverride(self, orig_card, context)
                 new_card:set_edition("e_negative", true)
                 new_card:add_to_deck()
                 G.consumeables:emplace(new_card)
-                G.E_MANAGER:add_event(Event({
-                    blocking = false,
-                    trigger = "after",
-                    func = function() 
-                        new_card.split = nil
-                        return true
-                    end
-                }))
+                new_card.split = nil
             end
             if not Talisman or not Talisman.config_file.disable_anims then
                 card_eval_status_text(context.blueprint_card or orig_card, 'extra', nil, nil, nil, {message = localize('k_duplicated_ex')})
