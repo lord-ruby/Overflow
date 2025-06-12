@@ -23,11 +23,11 @@ function Overflow.can_merge(self, card, bypass, ignore_area)
     if Overflow.is_blacklisted(self) or Overflow.is_blacklisted(card) or (self.area ~= G.consumeables and not ignore_area) or self.config.center.set == "Joker" then return end
     if not card then
         if Overflow.config.only_stack_negatives then
-            if not self.edition or self.edition.key ~= "e_negative" then
+            if not self.edition or not self.edition.negative then
                 return 
             else    
                 local v, i = Overflow.TableMatches(G.consumeables.cards, function(v, i)
-                    return v.config.center.key == self.config.center.key and v.edition and v.edition.key == "e_negative" and (v ~= self or bypass)
+                    return v.config.center.key == self.config.center.key and v.edition and v.edition.negative and (v ~= self or bypass)
                 end)
                 return v
             end
@@ -42,10 +42,10 @@ function Overflow.can_merge(self, card, bypass, ignore_area)
     else
         if (card.area ~= G.consumeables and not ignore_area) or card.config.center.set == "Joker" then return end
         if Overflow.config.only_stack_negatives then
-            if not self.edition or self.edition.key ~= "e_negative" then
+            if not self.edition or not self.edition.negative then
                 return 
             else 
-                return card.config.center.key == self.config.center.key and card.edition and card.edition.key == "e_negative" and (v ~= self or bypass)
+                return card.config.center.key == self.config.center.key and card.edition and card.edition.negative and (v ~= self or bypass)
             end
         else
             if (not card.edition and not self.edition) or (card.edition and self.edition and card.edition.key == self.edition.key) then
@@ -106,3 +106,51 @@ function Overflow.can_mass_use(set, area)
     end
     return total > 1 and total or nil
 end
+
+
+function Overflow.table_merge(target, source, ...)
+	assert(type(target) == "table", "Target is not a table")
+	local tables_to_merge = { source, ... }
+	if #tables_to_merge == 0 then
+		return target
+	end
+
+	for k, t in ipairs(tables_to_merge) do
+		assert(type(t) == "table", string.format("Expected a table as parameter %d", k))
+	end
+
+	for i = 1, #tables_to_merge do
+		local from = tables_to_merge[i]
+		for k, v in pairs(from) do
+			if type(v) == "table" then
+				target[k] = target[k] or {}
+				target[k] = Overflow.table_merge(target[k], v)
+			else
+				target[k] = v
+			end
+		end
+	end
+
+	return target
+end
+
+function Overflow.save_config() 
+    local serialized = "return { only_stack_negatives = "..tostring(Overflow.config.only_stack_negatives or false)..", fix_slots = "..tostring(Overflow.config.fix_slots or false).."}"
+    love.filesystem.write("config/Overflow.jkr", serialized)
+end
+
+function Overflow.load_config() 
+    if love.filesystem.exists("config/Overflow.jkr") then
+    local str = ""
+    for line in love.filesystem.lines("config/Overflow.jkr") do
+        str = str..line
+    end
+        return loadstring(str)()
+    else    
+        return {
+            only_stack_negatives = true,
+            fix_slots = true
+        }
+    end
+end
+if not Overflow.config then Overflow.config = Overflow.load_config() end

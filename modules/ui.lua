@@ -368,7 +368,7 @@ function Card:highlight(is_highlighted)
                     align = 'bmi',
                     offset = {
                         x = 0,
-                        y = y+0.5
+                        y = y
                     },
                     bond = 'Strong',
                     parent = self
@@ -406,7 +406,7 @@ function Card:highlight(is_highlighted)
                     align = 'bmi',
                     offset = {
                         x = 0,
-                        y = y + 1
+                        y = y + 0.5
                     },
                     bond = 'Strong',
                     parent = self
@@ -641,7 +641,7 @@ G.FUNCS.use_card = function(e)
 end
 
 
-local overflowConfigTab = function()
+Overflow.overflowConfigTab = function()
 	ovrf_nodes = {
 	}
 	left_settings = { n = G.UIT.C, config = { align = "tl", padding = 0.05 }, nodes = {} }
@@ -654,6 +654,9 @@ local overflowConfigTab = function()
 		ref_table = Overflow.config,
 		ref_value = "only_stack_negatives",
 		callback = function()
+            if not SMODS then
+                Overflow.save_config()
+            end
         end,
 	})
     ovrf_nodes[#ovrf_nodes + 1] = create_toggle({
@@ -662,6 +665,9 @@ local overflowConfigTab = function()
 		ref_table = Overflow.config,
 		ref_value = "fix_slots",
 		callback = function()
+            if not SMODS then
+                Overflow.save_config()
+            end
         end,
 	})
 	return {
@@ -679,5 +685,60 @@ local overflowConfigTab = function()
 	}
 end
 
-SMODS.current_mod.config_tab = overflowConfigTab
+if not SMODS then
+    function noSMODSoverflowConfigTab()
+        local t = create_UIBox_generic_options({
+            contents = {
+                {
+                    n = G.UIT.R,
+                    nodes = {
+                        create_toggle({
+                            label = localize("k_only_stack_negatives"),
+                            active_colour = HEX("40c76d"),
+                            ref_table = Overflow.config,
+                            ref_value = "only_stack_negatives",
+                            callback = function()
+                                if not SMODS then
+                                    Overflow.save_config()
+                                end
+                            end,
+                        }),
+                        create_toggle({
+                            label = localize("k_fix_slots"),
+                            active_colour = HEX("40c76d"),
+                            ref_table = Overflow.config,
+                            ref_value = "fix_slots",
+                            callback = function()
+                                if not SMODS then
+                                    Overflow.save_config()
+                                end
+                            end,
+                        })
+                    }
+                }
+            }
+        })
+        return t
+    end
+    local create_uibox_options_ref = create_UIBox_options
+    function create_UIBox_options()
+        local contents = create_uibox_options_ref()
+        table.insert(contents.nodes[1].nodes[1].nodes[1].nodes, 
+        UIBox_button({ label = { "Overflow" }, button = "overflow_open_config", minw = 5, colour = HEX("FF0000") }))
+        return contents
+    end
+    function G.FUNCS.overflow_open_config(e)
+        G.SETTINGS.paused = true
+        Overflow.config_opened = true
+        G.FUNCS.overlay_menu({
+            definition = noSMODSoverflowConfigTab(),
+        })
+    end
+    function G.FUNCS.overflow_close_config(e)
+        Overflow.config_opened = nil
+        if e then
+            return G.FUNCS.options(e)
+        end
+    end
+end
 

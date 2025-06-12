@@ -1,0 +1,40 @@
+[manifest]
+version = "1.0.0"
+dump_lua = true
+priority = 0
+
+[[patches]]
+[patches.module]
+source = "modules/hooks.lua"
+before = "main.lua"
+name = "overflow/hooks"
+
+[[patches]]
+[patches.module]
+source = "modules/ui.lua"
+before = "main.lua"
+name = "overflow/ui"
+
+[[patches]]
+[patches.module]
+source = "modules/utils.lua"
+before = "main.lua"
+name = "overflow/utils"
+
+[[patches]]
+[patches.module]
+source = "modules/vanilla_bulk_use.lua"
+before = "main.lua"
+name = "overflow/bulk_use"
+
+[[patches]]
+[patches.copy]
+target = "main.lua"
+position = "append"
+sources = ["Overflow.lua"]
+
+[[patches]]
+[patches.module]
+source = 'localization/en-us.lua'
+before = 'main.lua'
+name = 'overflow/localization/en-us'

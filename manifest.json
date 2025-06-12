@@ -6,7 +6,7 @@
     "description": "A consumable stacking system built from the ground up.",
     "prefix": "ovrf",
     "author": ["Ruby"],
-    "main_file": "Overflow.lua",
+    "main_file": "main.lua",
     "priority": 10,
     "badge_colour": "FE0001",
     "dependencies": [

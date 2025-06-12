@@ -43,12 +43,16 @@ Overflow.bulk_use_functions = {
         delay(0.6)
     end
 }
-for i, v in pairs(G.P_CENTERS) do
-    if v.set == "Planet" and not v.original_mod then
-        Overflow.bulk_use_functions[v.key] = function(self, area, _, amount)
-            update_hand_text({sound = 'button', volume = 0.7, pitch = 0.8, delay = 0.3}, {handname=localize(self.ability.consumeable.hand_type, 'poker_hands'),chips = G.GAME.hands[self.ability.consumeable.hand_type].chips, mult = G.GAME.hands[self.ability.consumeable.hand_type].mult, level=G.GAME.hands[self.ability.consumeable.hand_type].level})
-            level_up_hand(self, self.ability.consumeable.hand_type, nil, amount or 1)
-            update_hand_text({sound = 'button', volume = 0.7, pitch = 1.1, delay = 0}, {mult = 0, chips = 0, handname = '', level = ''})
+local init_prototypesref = Game.init_item_prototypes
+function Game:init_item_prototypes()
+    init_prototypesref(self)
+    for i, v in pairs(G.P_CENTERS) do
+        if v.set == "Planet" and not v.original_mod then
+            Overflow.bulk_use_functions[v.key] = function(self, area, _, amount)
+                update_hand_text({sound = 'button', volume = 0.7, pitch = 0.8, delay = 0.3}, {handname=localize(self.ability.consumeable.hand_type, 'poker_hands'),chips = G.GAME.hands[self.ability.consumeable.hand_type].chips, mult = G.GAME.hands[self.ability.consumeable.hand_type].mult, level=G.GAME.hands[self.ability.consumeable.hand_type].level})
+                level_up_hand(self, self.ability.consumeable.hand_type, nil, amount or 1)
+                update_hand_text({sound = 'button', volume = 0.7, pitch = 1.1, delay = 0}, {mult = 0, chips = 0, handname = '', level = ''})
+            end
         end
     end
 end

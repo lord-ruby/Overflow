@@ -202,28 +202,6 @@ function Card:set_cost()
     self.sell_cost_label = self.facing == 'back' and '?' or number_format(self.sell_cost)
 end
 
-SMODS.Voucher:take_ownership('observatory', {
-    calculate = function(self, card, context)
-        if
-            context.other_consumeable and
-            context.other_consumeable.ability.set == 'Planet' and
-            context.other_consumeable.ability.consumeable.hand_type == context.scoring_name
-        then
-            if not context.other_consumeable.ability.immutable then context.other_consumeable.ability.immutable = {} end
-            return {
-                x_mult = to_big(card.ability.extra) ^ (context.other_consumeable.ability.immutable.overflow_amount or 1),
-                message_card = context.other_consumeable,
-            }
-        end
-    end,
-})
-
-if not SMODS.Mods.Talisman or not SMODS.Mods.Talisman.can_load then
-    to_big = function(num) return num or -1e300 end
-    to_number = function(num) return num or -1e300 end
-end
-
-
 local card_load_ref = Card.load
 function Card:load(cardTable, other_card)
 	card_load_ref(self, cardTable, other_card)
@@ -242,4 +220,24 @@ function Card:save()
     local tbl = card_save_ref(self)
     tbl.overflow_amount = self and self.ability and self.ability.immutable and self.ability.immutable.overflow_amount
     return tbl
+end
+
+if not SMODS then
+    local init_localization_ref = init_localization
+    function init_localization(...)
+        if not G.localization.__overflow_injected then
+            local en_loc = require("overflow/localization/en-us")
+            Overflow.table_merge(G.localization, en_loc)
+            if G.SETTINGS.language ~= "en-us" then
+                local success, current_loc = pcall(function()
+                    return require("overflow/localization/" .. G.SETTINGS.language)
+                end)
+                if success and current_loc then
+                    Overflow.table_merge(G.localization, current_loc)
+                end
+            end
+            G.localization.__overflow_injected = true
+        end
+        return init_localization_ref(...)
+    end
 end
