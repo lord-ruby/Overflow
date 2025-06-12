@@ -27,7 +27,7 @@ function PerkeoOverride(self, orig_card, context)
     if context.ending_shop or context.forcetrigger then
         if G.consumeables.cards[1] then
             local card
-            if to_big(G.consumeables:get_total_count()) < to_big(100) then
+            if to_big(G.consumeables:get_total_count()) < to_big(200) then
                 local cards = {}
                 for i, v in ipairs(G.consumeables.cards) do
                     for k = 1, (v.ability.immutable.overflow_amount or 1) do
@@ -38,7 +38,7 @@ function PerkeoOverride(self, orig_card, context)
             else
                 local cards = {}
                 for i, v in ipairs(G.consumeables.cards) do
-                    cards[#cards+1] = {(v.ability.immutable.overflow_amount or 1), v}
+                    cards[#cards+1] = {to_big(v.ability.immutable.overflow_amount or 1) / to_big(v.area:get_total_count()), v}
                 end
                 card = Overflow.weighted_random(cards, "perkeo")
             end
