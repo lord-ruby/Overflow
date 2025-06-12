@@ -62,14 +62,15 @@ function PerkeoOverride(self, orig_card, context)
                     new_card:add_to_deck()
                     G.consumeables:emplace(new_card)
                 end
-            else
-                if card.ability.immutable.overflow_amount and Overflow.can_merge(card, card, true) then
+            elseif Overflow.can_merge(card, card, true) then
+                if card.ability.immutable.overflow_amount then
                     if not Talisman or not Talisman.config_file.disable_anims then
                         G.E_MANAGER:add_event(Event({
                             func = function() 
                                 play_sound('negative', 1.5, 0.4)
-                                Overflow.set_amount(card, card.ability.immutable.overflow_amount + 1)
-                                card:juice_up()
+                                    Overflow.set_amount(card, card.ability.immutable.overflow_amount + 1)
+                                    card:juice_up()
+                                    print("a")
                                 return true
                             end
                         }))
@@ -79,13 +80,14 @@ function PerkeoOverride(self, orig_card, context)
                 else
                     local check
                     for i, v in ipairs(G.consumeables.cards) do
-                        if v.edition and v.edition.negative and v.config.center.key == card.config.center.key and v ~= card then
+                        if v.edition and v.edition.negative and v.config.center.key == card.config.center.key and v ~= card and not v.dissolve then
                             if not Talisman or not Talisman.config_file.disable_anims then
                                 G.E_MANAGER:add_event(Event({
                                     func = function() 
                                         play_sound('negative', 1.5, 0.4)
-                                        v:juice_up()
-                                        Overflow.set_amount(v, (v.ability.immutable.overflow_amount or 1) + 1)
+                                            v:juice_up()
+                                            Overflow.set_amount(v, (v.ability.immutable.overflow_amount or 1) + 1)
+                                        print("b")
                                         return true
                                     end
                                 }))
@@ -103,6 +105,7 @@ function PerkeoOverride(self, orig_card, context)
                                     new_card.ability.immutable.overflow_amount = 1
                                     new_card:set_edition("e_negative", true)
                                     new_card:add_to_deck()
+                                    new_card.ability.split = true
                                     G.consumeables:emplace(new_card) 
                                     return true
                                 end
@@ -112,10 +115,19 @@ function PerkeoOverride(self, orig_card, context)
                             new_card.ability.immutable.overflow_amount = 1
                             new_card:set_edition("e_negative", true)
                             new_card:add_to_deck()
+                            new_card.ability.split = true
                             G.consumeables:emplace(new_card)
                         end
+                        print("c")
                     end
                 end
+            else
+                local new_card = copy_card(card, nil)
+                new_card.ability.immutable.overflow_amount = 1
+                new_card.ability.split = true
+                new_card:set_edition("e_negative", true)
+                new_card:add_to_deck()
+                G.consumeables:emplace(new_card)
             end
             if not Talisman or not Talisman.config_file.disable_anims then
                 card_eval_status_text(context.blueprint_card or orig_card, 'extra', nil, nil, nil, {message = localize('k_duplicated_ex')})
