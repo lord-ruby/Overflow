@@ -70,7 +70,6 @@ function PerkeoOverride(self, orig_card, context)
                                 play_sound('negative', 1.5, 0.4)
                                     Overflow.set_amount(card, card.ability.immutable.overflow_amount + 1)
                                     card:juice_up()
-                                    print("a")
                                 return true
                             end
                         }))
@@ -85,9 +84,8 @@ function PerkeoOverride(self, orig_card, context)
                                 G.E_MANAGER:add_event(Event({
                                     func = function() 
                                         play_sound('negative', 1.5, 0.4)
-                                            v:juice_up()
-                                            Overflow.set_amount(v, (v.ability.immutable.overflow_amount or 1) + 1)
-                                        print("b")
+                                        v:juice_up()
+                                        Overflow.set_amount(v, (v.ability.immutable.overflow_amount or 1) + 1)
                                         return true
                                     end
                                 }))
@@ -118,7 +116,14 @@ function PerkeoOverride(self, orig_card, context)
                             new_card.ability.split = true
                             G.consumeables:emplace(new_card)
                         end
-                        print("c")
+                        G.E_MANAGER:add_event(Event({
+                            blocking = false,
+                            trigger = "after",
+                            func = function() 
+                                new_card.split = nil
+                                return true
+                            end
+                        }))
                     end
                 end
             else
@@ -128,6 +133,14 @@ function PerkeoOverride(self, orig_card, context)
                 new_card:set_edition("e_negative", true)
                 new_card:add_to_deck()
                 G.consumeables:emplace(new_card)
+                G.E_MANAGER:add_event(Event({
+                    blocking = false,
+                    trigger = "after",
+                    func = function() 
+                        new_card.split = nil
+                        return true
+                    end
+                }))
             end
             if not Talisman or not Talisman.config_file.disable_anims then
                 card_eval_status_text(context.blueprint_card or orig_card, 'extra', nil, nil, nil, {message = localize('k_duplicated_ex')})

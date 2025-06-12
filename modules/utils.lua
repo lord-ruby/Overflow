@@ -75,7 +75,7 @@ end
 function Overflow.weighted_random(pool, pseudoseed)
     local poolsize = 0
     for k,v in pairs(pool) do
-       poolsize = poolsize + to_number(v[1])
+       poolsize = poolsize + to_number(v[1])*1000
     end
     local selection = pseudorandom(pseudoseed) * (poolsize-1) + 1
     for k,v in pairs(pool) do
