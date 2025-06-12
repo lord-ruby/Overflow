@@ -137,13 +137,13 @@ end
 
 function Overflow.save_config() 
     local serialized = "return { only_stack_negatives = "..tostring(Overflow.config.only_stack_negatives or false)..", fix_slots = "..tostring(Overflow.config.fix_slots or false).."}"
-    love.filesystem.write("config/Overflow.jkr", serialized)
+    love.filesystem.write("config/Overflow.lua", serialized)
 end
 
 function Overflow.load_config() 
-    if love.filesystem.exists("config/Overflow.jkr") then
+    if love.filesystem.exists("config/Overflow.lua") then
     local str = ""
-    for line in love.filesystem.lines("config/Overflow.jkr") do
+    for line in love.filesystem.lines("config/Overflow.lua") do
         str = str..line
     end
         return loadstring(str)()
