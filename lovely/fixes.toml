@@ -61,7 +61,37 @@ local amt = e.config.ref_table.ability.overflow_used_amount
 if to_big(amt or 1) <= to_big(1) then
     e.config.ref_table:use_consumeable(area)
 else
-    Overflow.bulk_use(e.config.ref_table, area, amt)
+    local num = amt
+    if Overflow.bulk_use_caps[e.config.ref_table.config.center.key] then
+        num = Overflow.bulk_use_caps[e.config.ref_table.config.center.key](num)
+    end
+    if e.config.ref_table.config.center.bulk_use_cap then
+        num = e.config.ref_table.config.center:bulk_use_cap(num)
+    end
+    Overflow.bulk_use(e.config.ref_table, area, num)
+    if to_big(amt) - to_big(num) > to_big(0) then
+        local mod = G.GAME.modifiers.entr_twisted
+        G.GAME.modifiers.entr_twisted = nil
+        local new_card = copy_card(e.config.ref_table)
+        G.GAME.modifiers.entr_twisted = mod
+        G.E_MANAGER:add_event(Event({
+            trigger = 'after',
+            delay = 0.3,
+            func = function()
+                new_card:add_to_deck()
+                G.consumeables:emplace(new_card)
+                new_card.ability.immutable = new_card.ability.immutable or {}
+                new_card.ability.immutable.overflow_amount = to_big(amt) - to_big(num)
+                new_card.ability.immutable.overflow_amount_text = number_format(new_card.ability.immutable.overflow_amount)
+                new_card.bypass = true
+                if to_big(new_card.ability.immutable.overflow_amount or 0) > to_big(1) then
+                    new_card:create_overflow_ui()
+                end
+                new_card.bypass = nil
+                return true
+            end
+        }))
+    end
 end
 '''
 match_indent = true
@@ -92,6 +122,8 @@ Overflow.blacklist = {
 }
 Overflow.mass_use_sets = {
     Planet = true
+}
+Overflow.bulk_use_caps = {
 }
 '''
 match_indent = true
