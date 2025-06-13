@@ -170,7 +170,7 @@ payload = '''
 visible_hands = Overflow.sort(visible_hands)
 '''
 match_indent = true
-times = 10
+times = 4
 
 
 [[patches]]
@@ -186,4 +186,4 @@ hands = Overflow.sort(hands)
 for _, v in ipairs(hands) do
 '''
 match_indent = true
-times = 10
+times = 4
