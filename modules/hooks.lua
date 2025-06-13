@@ -261,11 +261,14 @@ if not SMODS then
     local hands = {
 
     }
-    for i, v in pairs(G.GAME.hands) do
-        hands[#hands+1]= create_UIBox_current_hand_row(i, simple)
+    for i, v in pairs(G.handlist) do
+        hands[#hands+1] = v
     end
-    if Overflow.config.sorting_mode ~= 0 then
-        table.sort(hands, Overflow.get_sorting_func())
+    if Overflow.config.sorting_mode ~= 1 then
+        hands = Overflow.sort(hands, true)
+    end
+    for i, v in pairs(hands) do
+        hands[i] = create_UIBox_current_hand_row(v, simple)
     end
     local t = {n=G.UIT.ROOT, config={align = "cm", minw = 3, padding = 0.1, r = 0.1, colour = G.C.CLEAR}, nodes={
       {n=G.UIT.R, config={align = "cm", padding = 0.04}, nodes=

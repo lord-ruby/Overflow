@@ -156,7 +156,7 @@ function Overflow.load_config()
 end
 if not Overflow.config then Overflow.config = Overflow.load_config() end
 
-function Overflow.sort(hands)
+function Overflow.sort(hands, vanilla)
     if Overflow.config.sorting_mode == 2 then
         tbl = copy_table(hands)
         levelled = {}

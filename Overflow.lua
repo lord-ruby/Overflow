@@ -140,3 +140,8 @@ require("overflow/ui")
 require("overflow/hooks")
 require("overflow/utils")
 require("overflow/bulk_use")
+
+if not SMODS then
+    to_big = function(num) return num or -1e300 end
+    to_number = function(num) return num or -1e300 end
+end
