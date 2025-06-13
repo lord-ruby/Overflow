@@ -254,3 +254,26 @@ if not SMODS then
         return init_localization_ref(...)
     end
 end
+
+if not SMODS then
+    function create_UIBox_current_hands(simple)
+
+    local hands = {
+
+    }
+    for i, v in pairs(G.GAME.hands) do
+        hands[#hands+1]= create_UIBox_current_hand_row(i, simple)
+    end
+    if Overflow.config.sorting_mode ~= 0 then
+        table.sort(hands, Overflow.get_sorting_func())
+    end
+    local t = {n=G.UIT.ROOT, config={align = "cm", minw = 3, padding = 0.1, r = 0.1, colour = G.C.CLEAR}, nodes={
+      {n=G.UIT.R, config={align = "cm", padding = 0.04}, nodes=
+        hands
+      },
+    }}
+  
+    return t
+  end
+
+end

@@ -670,6 +670,15 @@ Overflow.overflowConfigTab = function()
             Overflow.save_config()
         end,
 	})
+
+    ovrf_nodes[#ovrf_nodes + 1] = create_option_cycle({
+		label = localize("sorting_mode"),
+		scale = 0.8,
+		w = 8,
+		options = {localize("sorting_default"), localize("sorting_lh"), localize("sorting_ph"), localize("sorting_ll"), localize("sorting_pl")},
+		opt_callback = "update_sorting_mode",
+		current_option = Overflow.config.sorting_mode,
+	})
 	return {
 		n = G.UIT.ROOT,
 		config = {
@@ -698,9 +707,7 @@ if not SMODS then
                             ref_table = Overflow.config,
                             ref_value = "only_stack_negatives",
                             callback = function()
-                                if not SMODS then
-                                    Overflow.save_config()
-                                end
+                                Overflow.save_config()
                             end,
                         }),
                         create_toggle({
@@ -709,10 +716,16 @@ if not SMODS then
                             ref_table = Overflow.config,
                             ref_value = "fix_slots",
                             callback = function()
-                                if not SMODS then
-                                    Overflow.save_config()
-                                end
+                                Overflow.save_config()
                             end,
+                        }),
+                        create_option_cycle({
+                            label = localize("sorting_mode"),
+                            scale = 0.8,
+                            w = 8,
+                            options = {localize("sorting_default"), localize("sorting_lh"), localize("sorting_ph"), localize("sorting_ll"), localize("sorting_pl")},
+                            opt_callback = "update_sorting_mode",
+                            current_option = Overflow.config.sorting_mode,
                         })
                     }
                 }
@@ -742,3 +755,7 @@ if not SMODS then
     end
 end
 
+G.FUNCS.update_sorting_mode = function(e)
+	Overflow.config.sorting_mode = e.to_key
+    Overflow.save_config()
+end

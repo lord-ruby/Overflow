@@ -153,3 +153,55 @@ if Overflow.config.fix_slots or (MP and MP.LOBBY and MP.LOBBY.code) then
 end
 '''
 match_indent = true
+
+
+[[patches]]
+[patches.pattern]
+target = '''=[SMODS _ "src/overrides.lua"]'''
+pattern = '''
+    for _, v in ipairs(G.handlist) do
+		if G.GAME.hands[v].visible then
+			table.insert(visible_hands, v)
+		end
+	end
+'''
+position = "after"
+payload = '''
+visible_hands = Overflow.sort(visible_hands)
+'''
+match_indent = true
+times = 10
+
+
+[[patches]]
+[patches.pattern]
+target = '''=[SMODS _ "src/overrides.lua"]'''
+pattern = '''
+for _, v in ipairs(G.handlist) do
+'''
+position = "at"
+payload = '''
+local hands = copy_table(G.handlist)
+hands = Overflow.sort(hands)
+for _, v in ipairs(hands) do
+'''
+match_indent = true
+times = 10
+
+[[patches]]
+[patches.pattern]
+target = '''=[SMODS _ "src/overrides.lua"]'''
+pattern = '''
+					create_option_cycle({
+						options = hand_options,
+						w = 4.5,
+						cycle_shoulders = true,
+						opt_callback =
+						'your_hands_page',
+						focus_args = { snap_to = true, nav = 'wide' },
+						current_option = args.cycle_config.current_option,
+						colour = G
+							.C.RED,
+						no_pips = true
+					})
+'''
