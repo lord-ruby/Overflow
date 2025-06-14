@@ -207,7 +207,7 @@ function Overflow.sort(hands, vanilla)
         other = {}
         for i, v in pairs(tbl) do if to_big(G.GAME.hands[v].level ) > to_big(1) then levelled[#levelled+1]=v else other[#other+1] = v end end
         table.sort(levelled, function(a,b)
-            return to_big(G.GAME.hands[a].level) > to_big(G.GAME.hands[b].level)
+            return to_big(G.GAME.hands[a].level) < to_big(G.GAME.hands[b].level)
         end)
         tbl = {}
         for i, v in pairs(other) do
