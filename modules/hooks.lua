@@ -120,6 +120,7 @@ G.FUNCS.use_card = function(e, mute, nosave)
         else
             G.GAME.modifiers.entr_twisted = mod
             card.ability.bypass_aleph = true
+            if not card.ability.immutable then card.ability.immutable = {} end
             local amount = card.ability.immutable.overflow_amount
             use_cardref(e, mute, nosave)
             G.E_MANAGER:add_event(Event({
@@ -208,11 +209,14 @@ function copy_card(other, new_card, card_scale, playing_card, strip_edition, don
 end
 
 local set_cost_ref = Card.set_cost
-function Card:set_cost()
-	set_cost_ref(self)
+function Card:set_cost(...)
+	local cost = set_cost_ref(self, ...)
     if not self.ability.immutable then self.ability.immutable = {} end
-	self.sell_cost = math.max(self.sell_cost * (self.ability.immutable.overflow_amount or 1), 0)
-    self.sell_cost_label = self.facing == 'back' and '?' or number_format(self.sell_cost)
+    if self.ability.immutable.overflow_amount and self.ability.immutable.overflow_amount > 0 then
+	    self.sell_cost = math.max(self.sell_cost * (self.ability.immutable.overflow_amount or 1), 0)
+        self.sell_cost_label = self.facing == 'back' and '?' or number_format(self.sell_cost)
+    end
+    return cost
 end
 
 local card_load_ref = Card.load
