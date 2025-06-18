@@ -284,3 +284,18 @@ if not SMODS then
   end
 
 end
+
+function AllowStacking() end
+function AllowDividing() end
+function AllowMassUsing(set) Overflow.mass_use_sets[set] = true end
+function AllowBulkUse() end
+function Card:getQty()
+    if not self.ability.immutable then self.ability.immutable = {} end
+    return self.ability.immutable.overflow_amount or 1
+end
+function Card:setQty(q)
+    Overflow.set_amount(self, q)
+end
+function Card:set_stack_display()
+    self:create_overflow_ui()
+end
