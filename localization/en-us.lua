@@ -15,8 +15,14 @@ return {
             sorting_mode = "Poker Hand UI Sorting Mode",
             sorting_default = "Default",
             sorting_lh = "Levels Highest to Lowest",
+            sorting_ch = "Chips Highest to Lowest",
+            sorting_mh = "Mult Highest to Lowest",
+            sorting_sh = "Combined Score Highest to Lowest",
             sorting_ph = "Times played Highest to Lowest",
             sorting_ll = "Levels Lowest to Highest",
+            sorting_cl = "Chips Lowest to Highest",
+            sorting_ml = "Mult Lowest to Highest",
+            sorting_sl = "Combined Score Lowest to Highest",
             sorting_pl = "Times played Lowest to Highest",
         }
     }

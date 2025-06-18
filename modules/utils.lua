@@ -183,6 +183,72 @@ function Overflow.sort(hands, vanilla)
         tbl = copy_table(hands)
         levelled = {}
         other = {}
+        for i, v in pairs(tbl) do if to_big(G.GAME.hands[v].chips ) > to_big(0) then levelled[#levelled+1]=v else other[#other+1] = v end end
+        table.sort(levelled, function(a,b)
+            return to_big(G.GAME.hands[a].chips) > to_big(G.GAME.hands[b].chips)
+        end)
+        tbl = {}
+        if #levelled > 0 then
+            for i, v in pairs(levelled) do
+                tbl[#tbl+1] = levelled[i]
+            end
+        end
+        for i, v in pairs(other) do
+            if to_big(G.GAME.hands[v].chips) <= to_big(0) then
+                tbl[#tbl+1] = other[i]
+            end
+        end
+        return tbl
+    end
+
+    if Overflow.config.sorting_mode == 4 then
+        tbl = copy_table(hands)
+        levelled = {}
+        other = {}
+        for i, v in pairs(tbl) do if to_big(G.GAME.hands[v].mult ) > to_big(0) then levelled[#levelled+1]=v else other[#other+1] = v end end
+        table.sort(levelled, function(a,b)
+            return to_big(G.GAME.hands[a].mult) > to_big(G.GAME.hands[b].mult)
+        end)
+        tbl = {}
+        if #levelled > 0 then
+            for i, v in pairs(levelled) do
+                tbl[#tbl+1] = levelled[i]
+            end
+        end
+        for i, v in pairs(other) do
+            if to_big(G.GAME.hands[v].mult) <= to_big(0) then
+                tbl[#tbl+1] = other[i]
+            end
+        end
+        return tbl
+    end
+    
+    if Overflow.config.sorting_mode == 5 then
+        tbl = copy_table(hands)
+        levelled = {}
+        other = {}
+        for i, v in pairs(tbl) do if (to_big(G.GAME.hands[v].chips )*to_big(G.GAME.hands[v].mult )) > to_big(0) then levelled[#levelled+1]=v else other[#other+1] = v end end
+        table.sort(levelled, function(a,b)
+            return (to_big(G.GAME.hands[a].chips )*to_big(G.GAME.hands[a].mult )) > (to_big(G.GAME.hands[b].chips )*to_big(G.GAME.hands[b].mult ))
+        end)
+        tbl = {}
+        if #levelled > 0 then
+            for i, v in pairs(levelled) do
+                tbl[#tbl+1] = levelled[i]
+            end
+        end
+        for i, v in pairs(other) do
+            if (to_big(G.GAME.hands[v].chips )*to_big(G.GAME.hands[v].mult )) <= to_big(0) then
+                tbl[#tbl+1] = other[i]
+            end
+        end
+        return tbl
+    end
+
+    if Overflow.config.sorting_mode == 6 then
+        tbl = copy_table(hands)
+        levelled = {}
+        other = {}
         for i, v in pairs(tbl) do if to_big(G.GAME.hands[v].played ) > to_big(0) then levelled[#levelled+1]=v else other[#other+1] = v end end
         table.sort(levelled, function(a,b)
             return to_big(G.GAME.hands[a].played) > to_big(G.GAME.hands[b].played)
@@ -201,7 +267,7 @@ function Overflow.sort(hands, vanilla)
         return tbl
     end
 
-    if Overflow.config.sorting_mode == 4 then
+    if Overflow.config.sorting_mode == 7 then
         tbl = copy_table(hands)
         levelled = {}
         other = {}
@@ -223,7 +289,73 @@ function Overflow.sort(hands, vanilla)
         return tbl
     end
 
-    if Overflow.config.sorting_mode == 5 then
+    if Overflow.config.sorting_mode == 8 then
+        tbl = copy_table(hands)
+        levelled = {}
+        other = {}
+        for i, v in pairs(tbl) do if to_big(G.GAME.hands[v].chips ) > to_big(0) then levelled[#levelled+1]=v else other[#other+1] = v end end
+        table.sort(levelled, function(a,b)
+            return to_big(G.GAME.hands[a].chips) < to_big(G.GAME.hands[b].chips)
+        end)
+        tbl = {}
+        for i, v in pairs(other) do
+            if to_big(G.GAME.hands[v].chips) <= to_big(0) then
+                tbl[#tbl+1] = other[i]
+            end
+        end
+        if #levelled > 0 then
+            for i, v in pairs(levelled) do
+                tbl[#tbl+1] = levelled[i]
+            end
+        end
+        return tbl
+    end
+
+    if Overflow.config.sorting_mode == 9 then
+        tbl = copy_table(hands)
+        levelled = {}
+        other = {}
+        for i, v in pairs(tbl) do if to_big(G.GAME.hands[v].mult ) > to_big(0) then levelled[#levelled+1]=v else other[#other+1] = v end end
+        table.sort(levelled, function(a,b)
+            return to_big(G.GAME.hands[a].mult) < to_big(G.GAME.hands[b].mult)
+        end)
+        tbl = {}
+        for i, v in pairs(other) do
+            if to_big(G.GAME.hands[v].mult) <= to_big(0) then
+                tbl[#tbl+1] = other[i]
+            end
+        end
+        if #levelled > 0 then
+            for i, v in pairs(levelled) do
+                tbl[#tbl+1] = levelled[i]
+            end
+        end
+        return tbl
+    end
+
+    if Overflow.config.sorting_mode == 10 then
+        tbl = copy_table(hands)
+        levelled = {}
+        other = {}
+        for i, v in pairs(tbl) do if (to_big(G.GAME.hands[v].chips )*to_big(G.GAME.hands[v].mult )) > to_big(0) then levelled[#levelled+1]=v else other[#other+1] = v end end
+        table.sort(levelled, function(a,b)
+            return (to_big(G.GAME.hands[a].chips )*to_big(G.GAME.hands[a].mult )) < (to_big(G.GAME.hands[b].chips )*to_big(G.GAME.hands[b].mult ))
+        end)
+        tbl = {}
+        for i, v in pairs(other) do
+            if (to_big(G.GAME.hands[v].chips )*to_big(G.GAME.hands[v].mult )) <= to_big(0) then
+                tbl[#tbl+1] = other[i]
+            end
+        end
+        if #levelled > 0 then
+            for i, v in pairs(levelled) do
+                tbl[#tbl+1] = levelled[i]
+            end
+        end
+        return tbl
+    end
+
+    if Overflow.config.sorting_mode == 11 then
         tbl = copy_table(hands)
         levelled = {}
         other = {}
@@ -233,7 +365,7 @@ function Overflow.sort(hands, vanilla)
         end)
         tbl = {}
         for i, v in pairs(other) do
-            if to_big(G.GAME.hands[v].played) <= to_big(1) then
+            if to_big(G.GAME.hands[v].played) <= to_big(0) then
                 tbl[#tbl+1] = other[i]
             end
         end

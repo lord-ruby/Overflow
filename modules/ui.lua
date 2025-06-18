@@ -675,7 +675,7 @@ Overflow.overflowConfigTab = function()
 		label = localize("sorting_mode"),
 		scale = 0.8,
 		w = 8,
-		options = {localize("sorting_default"), localize("sorting_lh"), localize("sorting_ph"), localize("sorting_ll"), localize("sorting_pl")},
+		options = {localize("sorting_default"), localize("sorting_lh"), localize("sorting_ch"), localize("sorting_mh"), localize("sorting_sh"), localize("sorting_ph"), localize("sorting_ll"), localize("sorting_cl"), localize("sorting_ml"), localize("sorting_sl"), localize("sorting_pl")},
 		opt_callback = "update_sorting_mode",
 		current_option = Overflow.config.sorting_mode,
 	})
