@@ -11,7 +11,8 @@ SMODS.Joker:take_ownership("j_perkeo", {
     calculate = function(self, orig_card, context)
         return PerkeoOverride(self, orig_card, context)
     end
-})
+},
+true)
 SMODS.Voucher:take_ownership('observatory', {
     calculate = function(self, card, context)
         if
@@ -26,7 +27,8 @@ SMODS.Voucher:take_ownership('observatory', {
             }
         end
     end,
-})
+},
+true)
 SMODS.Joker:take_ownership("j_constellation", {
     demicoloncompat = true,
     name = "Constellation (Overflow)",
@@ -47,7 +49,8 @@ SMODS.Joker:take_ownership("j_constellation", {
             }
         }
     end
-})
+},
+true)
 SMODS.current_mod.config_tab = Overflow.overflowConfigTab
 
 if not SMODS or not SMODS.Mods.Talisman or not SMODS.Mods.Talisman.can_load then
