@@ -42,6 +42,8 @@ debugplus.handleKeys = function(controller, key, dt)
         else
             ref(controller, key, dt)
         end
+    else
+        ref(controller, key, dt)
     end
 end
 debugplus.handleKeys(self, key, dt)
