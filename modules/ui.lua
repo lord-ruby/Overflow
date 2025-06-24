@@ -92,7 +92,7 @@ function Card:highlight(is_highlighted)
                 }
             }
         end
-        if Overflow.mass_use_sets[self.config.center.set] and self.area and Overflow.can_mass_use(self.config.center.set, self.area.cards) then
+        if Overflow.mass_use_sets[self.config.center.set] and self.area and Overflow.can_mass_use(self.config.center.set, self.area.cards) and G.FUNCS.can_mass_use({config = {ref_table = self}}) then
             self.children.mass_use = UIBox {
                 definition = {
                     n = G.UIT.ROOT,
@@ -289,7 +289,7 @@ function Card:highlight(is_highlighted)
         end
     else  
         local y = 0.3
-        if is_highlighted and Overflow.mass_use_sets[self.config.center.set] and self.area and Overflow.can_mass_use(self.config.center.set, self.area.cards) then
+        if is_highlighted and Overflow.mass_use_sets[self.config.center.set] and self.area and Overflow.can_mass_use(self.config.center.set, self.area.cards) and G.FUNCS.can_mass_use({config = {ref_table = self}}) then
             self.children.mass_use = UIBox {
                 definition = {
                     n = G.UIT.ROOT,
@@ -599,11 +599,17 @@ G.FUNCS.can_mass_use = function(e)
     if card.area == G.hand or card.area == G.consumeables then
         e.config.colour = G.C.SECONDARY_SET[card.config.center.set]
         e.config.button = 'mass_use'
-        e.states.visible = true
+        if e.states then
+            e.states.visible = true
+        end
+        return true
     else
         e.config.colour = G.C.UI.BACKGROUND_INACTIVE
         e.config.button = nil
-        e.states.visible = false
+        if e.states then
+            e.states.visible = false
+        end
+        return nil
     end
 end
 
