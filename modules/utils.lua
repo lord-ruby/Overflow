@@ -69,6 +69,7 @@ function Overflow.set_amount(card, amount)
         card.ability.immutable.overflow_amount_text = amount and number_format(amount) or "s"
         card:set_cost()
         card:create_overflow_ui()
+        card.ability.immutable.overflow_used_amount = nil
     end
 end
 

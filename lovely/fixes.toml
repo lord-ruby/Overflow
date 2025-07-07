@@ -85,6 +85,7 @@ else
                 new_card.ability.immutable = new_card.ability.immutable or {}
                 new_card.ability.immutable.overflow_amount = to_big(amt) - to_big(num)
                 new_card.ability.immutable.overflow_amount_text = number_format(new_card.ability.immutable.overflow_amount)
+                new_card.ability.immutable.overflow_used_amount = nil
                 new_card.bypass = true
                 if to_big(new_card.ability.immutable.overflow_amount or 0) > to_big(1) then
                     new_card:create_overflow_ui()
