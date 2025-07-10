@@ -63,7 +63,7 @@ function Overflow.set_amount(card, amount)
         end
         if not card.ability.immutable then card.ability.immutable = {} end
         card.ability.immutable.overflow_amount = amount
-        if to_big(card.ability.immutable.overflow_amount) < to_big(1e100) then
+        if to_big(card.ability.immutable.overflow_amount or 0) < to_big(1e100) then
             card.ability.immutable.overflow_amount = to_number(card.ability.immutable.overflow_amount)
         end
         card.ability.immutable.overflow_amount_text = amount and number_format(amount) or "s"
