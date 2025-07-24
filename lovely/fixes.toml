@@ -82,12 +82,11 @@ else
             func = function()
                 new_card:add_to_deck()
                 G.consumeables:emplace(new_card)
-                new_card.ability.immutable = new_card.ability.immutable or {}
-                new_card.ability.immutable.overflow_amount = to_big(amt) - to_big(num)
-                new_card.ability.immutable.overflow_amount_text = number_format(new_card.ability.immutable.overflow_amount)
-                new_card.ability.immutable.overflow_used_amount = nil
+                new_card.ability.overflow_amount = to_big(amt) - to_big(num)
+                new_card.ability.overflow_amount_text = number_format(new_card.ability.overflow_amount)
+                new_card.ability.overflow_used_amount = nil
                 new_card.bypass = true
-                if to_big(new_card.ability.immutable.overflow_amount or 0) > to_big(1) then
+                if to_big(new_card.ability.overflow_amount or 0) > to_big(1) then
                     new_card:create_overflow_ui()
                 end
                 new_card.bypass = nil
@@ -142,9 +141,9 @@ if Overflow.config.fix_slots or (MP and MP.LOBBY and MP.LOBBY.code) then
     if self == G.consumeables then
         for i, v in ipairs(self.cards) do   
             if not v.edition or not v.edition.card_limit then
-                if v.ability and v.ability.immutable and v.ability.immutable.overflow_amount then
-                    if to_big(v.ability.immutable.overflow_amount) > to_big(1) then
-                        self.config.card_count = self.config.card_count + math.min(1e100, to_number(v.ability.immutable.overflow_amount) - 1)
+                if v.ability and v.ability.overflow_amount then
+                    if to_big(v.ability.overflow_amount) > to_big(1) then
+                        self.config.card_count = self.config.card_count + math.min(1e100, to_number(v.ability.overflow_amount) - 1)
                     end
                 end
             end

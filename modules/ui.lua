@@ -1,20 +1,19 @@
 --manage buttons for the consumables
 function Card:create_overflow_ui()
-    if not self.ability.immutable then self.ability.immutable = {} end
-    if self.ability.immutable.overflow_amount and (to_big(self.ability.immutable.overflow_amount) == to_big(1) or to_big(self.ability.immutable.overflow_amount) == to_big(0)) then
-        self.ability.immutable.overflow_amount = nil
+    if self.ability.overflow_amount and (to_big(self.ability.overflow_amount) == to_big(1) or to_big(self.ability.overflow_amount) == to_big(0)) then
+        self.ability.overflow_amount = nil
     end
-    if self.ability.immutable.overflow_amount and self.ability.immutable.overflow_amount_text ~= "" and (self.area == G.consumeables or self.bypass) then
+    if self.ability.overflow_amount and self.ability.overflow_amount_text ~= "" and (self.area == G.consumeables or self.bypass) then
         if self.children.overflow_ui then
             self.children.overflow_ui:remove()
             self.children.overflow_ui = nil 
         end
-        self.ability.immutable.overflow_amount_text = self.ability.immutable.overflow_amount_text or number_format(self.ability.immutable.overflow_amount)
+        self.ability.overflow_amount_text = self.ability.overflow_amount_text or number_format(self.ability.overflow_amount)
         self.children.overflow_ui = UIBox {
 			definition = {n=G.UIT.C, config={align = "tm"}, nodes={
                 {n=G.UIT.C, config={ref_table = self, align = "tm",maxw = 1.5, padding = 0.1, r=0.08, minw = 0.45, minh = 0.45, hover = true, shadow = true, colour = G.C.UI.BACKGROUND_INACTIVE}, nodes={
                   {n=G.UIT.T, config={text = "x",colour = G.C.RED, scale = 0.35, shadow = true}},
-                  {n=G.UIT.T, config={ref_table = self.ability.immutable, ref_value = 'overflow_amount_text',colour = G.C.WHITE, scale = 0.35, shadow = true}}
+                  {n=G.UIT.T, config={ref_table = self.ability, ref_value = 'overflow_amount_text',colour = G.C.WHITE, scale = 0.35, shadow = true}}
                 }}
               }
 			},
@@ -33,7 +32,7 @@ function Card:create_overflow_ui()
             self.children.overflow_ui:remove()
             self.children.overflow_ui = nil 
         end
-        self.ability.immutable.overflow_amount = nil
+        self.ability.overflow_amount = nil
     end
 end
 
@@ -42,7 +41,7 @@ function Card:load(cardTable, other_card)
 	card_load_ref(self, cardTable, other_card)
 	if self.ability then
         if not self.ability.immutable then self.ability.immutable = {} end
-		if self.ability.immutable.overflow_amount then
+		if self.ability.overflow_amount then
 			self:create_overflow_ui()
 		end
 	end
@@ -50,7 +49,7 @@ end
 
 local highlight_ref = Card.highlight
 function Card:highlight(is_highlighted)
-    if self.area == G.consumeables and self.config.center.set ~= "Joker" and is_highlighted and self.ability.immutable.overflow_amount and to_big(self.ability.immutable.overflow_amount) > to_big(1) then
+    if self.area == G.consumeables and self.config.center.set ~= "Joker" and is_highlighted and self.ability.overflow_amount and to_big(self.ability.overflow_amount) > to_big(1) then
         local y = Overflow.can_bulk_use(self) and 0.45 or 0
         if  Overflow.can_bulk_use(self) then
             self.children.bulk_use = UIBox {
@@ -440,7 +439,7 @@ end
 
 G.FUNCS.can_bulk_use = function(e)
 	local card = e.config.ref_table
-	if (card.config.center.bulk_use or Overflow.bulk_use_functions[card.config.center.key]) and (not card.config.center.can_bulk_use or Overflow.can_bulk_use(card)) and to_big(card.ability.immutable.overflow_amount) > to_big(1) then
+	if (card.config.center.bulk_use or Overflow.bulk_use_functions[card.config.center.key]) and (not card.config.center.can_bulk_use or Overflow.can_bulk_use(card)) and to_big(card.ability.overflow_amount) > to_big(1) then
         e.config.colour = G.C.SECONDARY_SET[card.config.center.set]
         e.config.button = 'bulk_use'
 		e.states.visible = true
@@ -453,7 +452,7 @@ end
 
 G.FUNCS.bulk_use = function(e)
 	local card = e.config.ref_table
-    card.ability.overflow_used_amount = card.ability.immutable.overflow_amount
+    card.ability.overflow_used_amount = card.ability.overflow_amount
     Overflow.set_amount(card, nil)
     card.ability.bypass_aleph = true
     if card.children.overflow_ui then
@@ -465,7 +464,7 @@ end
 
 G.FUNCS.can_split_one = function(e)
 	local card = e.config.ref_table
-	if to_big(card.ability.immutable.overflow_amount or 0) > to_big(1) then
+	if to_big(card.ability.overflow_amount or 0) > to_big(1) then
         e.config.colour = G.C.SECONDARY_SET[card.config.center.set]
         e.config.button = 'split_one'
 		e.states.visible = true
@@ -482,12 +481,12 @@ G.FUNCS.split_one = function(e)
 	local card = e.config.ref_table
     local new_card = copy_card(card)
     Overflow.set_amount(new_card, nil)
-    Overflow.set_amount(card, card.ability.immutable.overflow_amount - 1)
+    Overflow.set_amount(card, card.ability.overflow_amount - 1)
     new_card:add_to_deck()
     card:set_cost()
     new_card:set_cost()
-    new_card.ability.immutable.overflow_used_amount = nil
-    card.ability.immutable.overflow_used_amount = nil
+    new_card.ability.overflow_used_amount = nil
+    card.ability.overflow_used_amount = nil
     new_card.ability.split = true
     G.consumeables:emplace(new_card)
     G.GAME.modifiers.entr_twisted = mod
@@ -510,7 +509,7 @@ G.FUNCS.merge = function(e)
 	local card = e.config.ref_table
     local v = Overflow.can_merge(card)
     if v then
-        Overflow.set_amount(v, (v.ability.immutable.overflow_amount or 1) + (card.ability.immutable.overflow_amount or 1))
+        Overflow.set_amount(v, (v.ability.overflow_amount or 1) + (card.ability.overflow_amount or 1))
         card.ability.bypass_aleph = true
         card:start_dissolve()
         G.E_MANAGER:add_event(Event({
@@ -526,7 +525,7 @@ end
 
 G.FUNCS.can_split_half = function(e)
 	local card = e.config.ref_table
-	if to_big(card.ability.immutable.overflow_amount) > to_big(1) then
+	if to_big(card.ability.overflow_amount) > to_big(1) then
         e.config.colour = G.C.SECONDARY_SET[card.config.center.set]
         e.config.button = 'split_half'
 		e.states.visible = true
@@ -542,8 +541,8 @@ G.FUNCS.split_half = function(e)
     G.GAME.modifiers.entr_twisted = nil
 	local card = e.config.ref_table
     local new_card = copy_card(card)
-    local top_half = math.floor(card.ability.immutable.overflow_amount/2)
-    local bottom_half = card.ability.immutable.overflow_amount - top_half
+    local top_half = math.floor(card.ability.overflow_amount/2)
+    local bottom_half = card.ability.overflow_amount - top_half
     new_card.bypass = true
     card.bypass = true
     Overflow.set_amount(new_card, bottom_half)
@@ -552,8 +551,8 @@ G.FUNCS.split_half = function(e)
     new_card.ability.split = true
     card:set_cost()
     new_card:set_cost()
-    new_card.ability.immutable.overflow_used_amount = nil
-    card.ability.immutable.overflow_used_amount = nil
+    new_card.ability.overflow_used_amount = nil
+    card.ability.overflow_used_amount = nil
     G.consumeables:emplace(new_card)
     new_card:create_overflow_ui()
     card:create_overflow_ui()
@@ -585,7 +584,7 @@ G.FUNCS.merge_all = function(e)
         if Overflow.can_merge(v, card) and card ~= v then
             v.ability.bypass_aleph = true
             v:start_dissolve()
-            Overflow.set_amount(card, (v.ability.immutable.overflow_amount or 1) + (card.ability.immutable.overflow_amount or 1))
+            Overflow.set_amount(card, (v.ability.overflow_amount or 1) + (card.ability.overflow_amount or 1))
         end
     end
     G.E_MANAGER:add_event(Event({
@@ -620,7 +619,7 @@ end
 G.FUNCS.mass_use = function(e)
 	local card = e.config.ref_table
     card.mass_use = true
-    card.ability.immutable.overflow_amount = card.ability.immutable.overflow_amount or 1
+    card.ability.overflow_amount = card.ability.overflow_amount or 1
     G.FUNCS.bulk_use(e)
 end
 
@@ -636,7 +635,7 @@ G.FUNCS.use_card = function(e)
         end
         if c then
             c.mass_use = true
-            c.ability.immutable.overflow_amount = c.ability.immutable.overflow_amount or 1
+            c.ability.overflow_amount = c.ability.overflow_amount or 1
             G.E_MANAGER:add_event(Event({
                 trigger = 'after',
                 func = function()

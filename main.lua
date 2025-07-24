@@ -19,9 +19,8 @@ SMODS.Voucher:take_ownership('observatory', {
             context.other_consumeable.ability.set == 'Planet' and
             context.other_consumeable.ability.consumeable.hand_type == context.scoring_name
         then
-            if not context.other_consumeable.ability.immutable then context.other_consumeable.ability.immutable = {} end
             return {
-                x_mult = to_big(card.ability.extra) ^ (context.other_consumeable.ability.immutable.overflow_amount or 1),
+                x_mult = to_big(card.ability.extra) ^ (context.other_consumeable.ability.overflow_amount or 1),
                 message_card = context.other_consumeable,
             }
         end
@@ -54,4 +53,3 @@ if not SMODS or not SMODS.Mods.Talisman or not SMODS.Mods.Talisman.can_load then
     to_big = function(num) return num or -1e300 end
     to_number = function(num) return num or -1e300 end
 end
-

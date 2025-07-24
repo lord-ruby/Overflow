@@ -6,7 +6,7 @@ if not SMODS then
             if context.joker_main then
                 return {
                     message = localize{type = 'variable', key = 'a_xmult', vars = {G.P_CENTERS.v_observatory.config.extra}},
-                    Xmult_mod = to_big(G.P_CENTERS.v_observatory.config.extra) ^ to_big(self.ability.immutable.overflow_amount or 1)
+                    Xmult_mod = to_big(G.P_CENTERS.v_observatory.config.extra) ^ to_big(self.ability.overflow_amount or 1)
                 }
             end
         elseif self.ability.set == "Joker" and self.ability.name == "Perkeo" then
@@ -30,7 +30,7 @@ function PerkeoOverride(self, orig_card, context)
             if to_big(G.consumeables:get_total_count()) < to_big(200) then
                 local cards = {}
                 for i, v in ipairs(G.consumeables.cards) do
-                    for k = 1, (v.ability.immutable.overflow_amount or 1) do
+                    for k = 1, (v.ability.overflow_amount or 1) do
                         cards[#cards+1] = v
                     end
                 end
@@ -38,7 +38,7 @@ function PerkeoOverride(self, orig_card, context)
             else
                 local cards = {}
                 for i, v in ipairs(G.consumeables.cards) do
-                    cards[#cards+1] = {to_big(v.ability.immutable.overflow_amount or 1) / to_big(v.area:get_total_count()), v}
+                    cards[#cards+1] = {to_big(v.ability.overflow_amount or 1) / to_big(v.area:get_total_count()), v}
                 end
                 card = Overflow.weighted_random(cards, "perkeo")
             end
@@ -48,7 +48,7 @@ function PerkeoOverride(self, orig_card, context)
                     G.E_MANAGER:add_event(Event({
                         func = function() 
                             local new_card = copy_card(card, nil)
-                            new_card.ability.immutable.overflow_amount = 1
+                            new_card.ability.overflow_amount = 1
                             new_card:set_edition("e_negative", true)
                             new_card:add_to_deck()
                             G.consumeables:emplace(new_card) 
@@ -57,24 +57,24 @@ function PerkeoOverride(self, orig_card, context)
                     }))
                 else    
                     local new_card = copy_card(card, nil)
-                    new_card.ability.immutable.overflow_amount = 1
+                    new_card.ability.overflow_amount = 1
                     new_card:set_edition("e_negative", true)
                     new_card:add_to_deck()
                     G.consumeables:emplace(new_card)
                 end
             elseif Overflow.can_merge(card, card, true) then
-                if card.ability.immutable.overflow_amount then
+                if card.ability.overflow_amount then
                     if not Talisman or not Talisman.config_file.disable_anims then
                         G.E_MANAGER:add_event(Event({
                             func = function() 
                                 play_sound('negative', 1.5, 0.4)
-                                    Overflow.set_amount(card, card.ability.immutable.overflow_amount + 1)
+                                    Overflow.set_amount(card, card.ability.overflow_amount + 1)
                                     card:juice_up()
                                 return true
                             end
                         }))
                     else
-                        Overflow.set_amount(card, card.ability.immutable.overflow_amount + 1)
+                        Overflow.set_amount(card, card.ability.overflow_amount + 1)
                     end
                 else
                     local check
@@ -85,12 +85,12 @@ function PerkeoOverride(self, orig_card, context)
                                     func = function() 
                                         play_sound('negative', 1.5, 0.4)
                                         v:juice_up()
-                                        Overflow.set_amount(v, (v.ability.immutable.overflow_amount or 1) + 1)
+                                        Overflow.set_amount(v, (v.ability.overflow_amount or 1) + 1)
                                         return true
                                     end
                                 }))
                             else
-                                Overflow.set_amount(v, (v.ability.immutable.overflow_amount or 1) + 1)
+                                Overflow.set_amount(v, (v.ability.overflow_amount or 1) + 1)
                             end
                             check = true
                         end
@@ -100,7 +100,7 @@ function PerkeoOverride(self, orig_card, context)
                             G.E_MANAGER:add_event(Event({
                                 func = function() 
                                     local new_card = copy_card(card, nil)
-                                    new_card.ability.immutable.overflow_amount = 1
+                                    new_card.ability.overflow_amount = 1
                                     new_card:set_edition("e_negative", true)
                                     new_card:add_to_deck()
                                     new_card.ability.split = true
@@ -111,7 +111,7 @@ function PerkeoOverride(self, orig_card, context)
                             }))
                         else    
                             local new_card = copy_card(card, nil)
-                            new_card.ability.immutable.overflow_amount = 1
+                            new_card.ability.overflow_amount = 1
                             new_card:set_edition("e_negative", true)
                             new_card:add_to_deck()
                             new_card.ability.split = true
@@ -122,7 +122,7 @@ function PerkeoOverride(self, orig_card, context)
                 end
             else
                 local new_card = copy_card(card, nil)
-                new_card.ability.immutable.overflow_amount = 1
+                new_card.ability.overflow_amount = 1
                 new_card.ability.split = true
                 new_card:set_edition("e_negative", true)
                 new_card:add_to_deck()
