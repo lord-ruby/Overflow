@@ -61,14 +61,15 @@ function Overflow.set_amount(card, amount)
         if to_big(amount or 0) < to_big(1e100) then
             amount = to_number(amount)
         end
-        card.ability.overflow_amount = amount
-        if to_big(card.ability.overflow_amount or 0) < to_big(1e100) then
-            card.ability.overflow_amount = to_number(card.ability.overflow_amount)
+        if not card.ability.immutable then card.ability.immutable = {} end
+        card.ability.immutable.overflow_amount = amount
+        if to_big(card.ability.immutable.overflow_amount or 0) < to_big(1e100) then
+            card.ability.immutable.overflow_amount = to_number(card.ability.immutable.overflow_amount)
         end
-        card.ability.overflow_amount_text = amount and number_format(amount) or "s"
+        card.ability.immutable.overflow_amount_text = amount and number_format(amount) or "s"
         card:set_cost()
         card:create_overflow_ui()
-        card.ability.overflow_used_amount = nil
+        card.ability.immutable.overflow_used_amount = nil
     end
 end
 
@@ -94,7 +95,7 @@ end
 function CardArea:get_total_count()
     local total = 0
     for i, v in ipairs(self.cards) do
-        total = total + (v and v.ability and v.ability.overflow_amount or 1)
+        total = total + (v and v.ability and v.ability.immutable and v.ability.immutable.overflow_amount or 1)
     end
     return total
 end
