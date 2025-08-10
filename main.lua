@@ -33,10 +33,17 @@ SMODS.Joker:take_ownership("j_constellation", {
     calculate = function(self, card, context)
         if (context.using_consumeable and context.consumeable.ability.set == 'Planet') or context.forcetrigger then
             card.ability.x_mult = card.ability.x_mult + (card.ability.extra * (context.consumeable.ability.overflow_used_amount or 1))
-            G.E_MANAGER:add_event(Event({
-                func = function() card_eval_status_text(card, 'extra', nil, nil, nil, {message = localize{type='variable',key='a_xmult',vars={card.ability.x_mult}}}); return true
-                end}))
-            return
+            local msg = SMODS.scale_card(card, {
+                ref_table = card.ability,
+                ref_value = "x_mult",
+                scalar_value = "extra"
+            })
+            if not msg or type(msg) == "string" then
+                G.E_MANAGER:add_event(Event({
+                    func = function() card_eval_status_text(card, 'extra', nil, nil, nil, {message = msg or localize{type='variable',key='a_xmult',vars={card.ability.x_mult}}}); return true
+                    end}))
+                return
+            end
         end
     end,
     loc_vars = function(self,q,card)
