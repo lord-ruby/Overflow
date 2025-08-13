@@ -62,7 +62,7 @@ function PerkeoOverride(self, orig_card, context)
                     new_card:add_to_deck()
                     G.consumeables:emplace(new_card)
                 end
-            elseif Overflow.can_merge(card, card, true) then
+            elseif Overflow.can_merge(card, card, true) and not Overflow.is_blacklisted(card) then
                 if card.ability.immutable.overflow_amount then
                     if not Talisman or not Talisman.config_file.disable_anims then
                         G.E_MANAGER:add_event(Event({
