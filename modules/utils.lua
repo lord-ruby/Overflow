@@ -21,6 +21,7 @@ end
 
 function Overflow.can_merge(self, card, bypass, ignore_area)
     if self.dissolve or (card and card.dissolve) then return false end
+    if self.sell_cost ~= card.sell_cost then return false end
     if Overflow.is_blacklisted(self) or Overflow.is_blacklisted(card) or (self.area ~= G.consumeables and not ignore_area) or self.config.center.set == "Joker" then return end
     if not card then
         if Overflow.config.only_stack_negatives or (MP and MP.LOBBY and MP.LOBBY.code) then
