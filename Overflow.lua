@@ -43,7 +43,7 @@ function PerkeoOverride(self, orig_card, context)
                 card = Overflow.weighted_random(cards, "perkeo")
             end
             
-            if card.config.center.set == "Joker" then
+            if card and card.config.center.set == "Joker" then
                 if not Talisman or not Talisman.config_file.disable_anims then
                     G.E_MANAGER:add_event(Event({
                         func = function() 
@@ -62,7 +62,7 @@ function PerkeoOverride(self, orig_card, context)
                     new_card:add_to_deck()
                     G.consumeables:emplace(new_card)
                 end
-            elseif Overflow.can_merge(card, card, true) and not Overflow.is_blacklisted(card) then
+            elseif card and Overflow.can_merge(card, card, true) and not Overflow.is_blacklisted(card) then
                 if card.ability.immutable.overflow_amount then
                     if not Talisman or not Talisman.config_file.disable_anims then
                         G.E_MANAGER:add_event(Event({
@@ -120,7 +120,7 @@ function PerkeoOverride(self, orig_card, context)
                         end
                     end
                 end
-            else
+            elseif card then
                 local new_card = copy_card(card, nil)
                 new_card.ability.immutable.overflow_amount = 1
                 new_card.ability.split = true
