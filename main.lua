@@ -46,7 +46,7 @@ SMODS.Joker:take_ownership("j_constellation", {
                 scalar_value = "extra",
                 message_key = 'a_xmult'
             })
-            return {nil, true}
+            return nil, true
         end
     end,
     loc_vars = function(self,q,card)
