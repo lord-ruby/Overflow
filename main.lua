@@ -31,7 +31,7 @@ SMODS.Joker:take_ownership("j_constellation", {
     demicoloncompat = true,
     name = "Constellation (Overflow)",
     calculate = function(self, card, context)
-        if (context.using_consumeable and context.consumeable.ability.set == 'Planet') or context.forcetrigger then
+        if (context.using_consumeable and context.consumeable.ability.set == 'Planet' and not context.blueprint) or context.forcetrigger then
             for _=1,(context.consumeable and context.consumeable.ability.overflow_used_amount or 1)-1 do
                 SMODS.scale_card(card, {
                     ref_table = card.ability,
