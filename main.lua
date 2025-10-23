@@ -32,13 +32,21 @@ SMODS.Joker:take_ownership("j_constellation", {
     name = "Constellation (Overflow)",
     calculate = function(self, card, context)
         if (context.using_consumeable and context.consumeable.ability.set == 'Planet') or context.forcetrigger then
-            SMODS.scale_card(self, {
-                ref_table = self.ability,
+            for _=1,(context.consumeable and context.consumeable.ability.overflow_used_amount or 1)-1 do
+                SMODS.scale_card(card, {
+                    ref_table = card.ability,
+                    ref_value = "x_mult",
+                    scalar_value = "extra",
+                    scaling_message = {}
+                })
+            end
+            SMODS.scale_card(card, {
+                ref_table = card.ability,
                 ref_value = "x_mult",
                 scalar_value = "extra",
                 message_key = 'a_xmult'
             })
-            return nil true
+            return {nil, true}
         end
     end,
     loc_vars = function(self,q,card)
