@@ -60,7 +60,7 @@ SMODS.Joker:take_ownership("j_constellation", {
 })
 SMODS.current_mod.config_tab = Overflow.overflowConfigTab
 
-if not SMODS or not SMODS.Mods.Talisman or not SMODS.Mods.Talisman.can_load then
+if not to_big then
     to_big = function(num) return num or -1e300 end
     to_number = function(num) return num or -1e300 end
 end
