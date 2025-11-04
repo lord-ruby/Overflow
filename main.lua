@@ -62,6 +62,7 @@ SMODS.current_mod.config_tab = Overflow.overflowConfigTab
 
 if not to_big then
     to_big = function(num) return num or -1e300 end
+    is_number = function(num) return type(num) == "number" end
     to_number = function(num) return num or -1e300 end
 end
 
