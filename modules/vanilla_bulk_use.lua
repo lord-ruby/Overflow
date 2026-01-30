@@ -25,6 +25,7 @@ Overflow.bulk_use_functions = {
         update_hand_text({sound = 'button', volume = 0.7, pitch = 1.1, delay = 0}, {mult = 0, chips = 0, handname = '', level = ''})
     end,
     c_temperance = function(self, _, _, amount)
+        local used_tarot = self
         G.E_MANAGER:add_event(Event({trigger = 'after', delay = 0.4, func = function()
             play_sound('timpani')
             used_tarot:juice_up(0.3, 0.5)
@@ -33,6 +34,7 @@ Overflow.bulk_use_functions = {
         delay(0.6)
     end,
     c_hermit = function(self, _, _, amount)
+        local used_tarot = self
         local num = 1
         num = num * to_big(2) ^ to_big(amount)
         G.E_MANAGER:add_event(Event({trigger = 'after', delay = 0.4, func = function()

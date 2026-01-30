@@ -19,9 +19,8 @@ SMODS.Voucher:take_ownership('observatory', {
             context.other_consumeable.ability.set == 'Planet' and
             context.other_consumeable.ability.consumeable.hand_type == context.scoring_name
         then
-            if not context.other_consumeable.ability.immutable then context.other_consumeable.ability.immutable = {} end
             return {
-                x_mult = to_big(card.ability.extra) ^ (context.other_consumeable.ability.immutable.overflow_amount or 1),
+                x_mult = to_big(card.ability.extra) ^ (context.other_consumeable.qty or 1),
                 message_card = context.other_consumeable,
             }
         end
@@ -32,7 +31,7 @@ SMODS.Joker:take_ownership("j_constellation", {
     name = "Constellation (Overflow)",
     calculate = function(self, card, context)
         if (context.using_consumeable and context.consumeable.ability.set == 'Planet' and not context.blueprint) or context.forcetrigger then
-            for _=1,(context.consumeable and context.consumeable.ability.overflow_used_amount or 1)-1 do
+            for _=1,(context.consumeable and context.consumeable.qty_used or 1)-1 do
                 SMODS.scale_card(card, {
                     ref_table = card.ability,
                     ref_value = "x_mult",

@@ -8,7 +8,6 @@ function CardArea:emplace(card, ...)
             card.children.overflow_ui = nil 
         end
     else
-        if not card.ability.immutable then card.ability.immutable = {} end
         if Overflow.config.only_stack_negatives or (MP and MP.LOBBY and MP.LOBBY.code) then
             if not card.edition or not card.edition.negative then
                 emplace_ref(self, card, ...)
@@ -17,7 +16,7 @@ function CardArea:emplace(card, ...)
                     return v.config.center.key == card.config.center.key and v.edition and v.edition.negative and v ~= self
                 end)
                 if v then
-                    Overflow.set_amount(v, (v.ability.immutable.overflow_amount or 1) + (card.ability.immutable.overflow_amount or 1))
+                    Overflow.set_amount(v, (v.qty or 1) + (card.qty or 1))
                     card.states.visible = false
                     card.ability.bypass_aleph = true
                     card:start_dissolve()
@@ -32,7 +31,7 @@ function CardArea:emplace(card, ...)
                 end
             end)
             if v then
-                Overflow.set_amount(v, (v.ability.immutable.overflow_amount or 1) + (card.ability.immutable.overflow_amount or 1))
+                Overflow.set_amount(v, (v.qty or 1) + (card.qty or 1))
                 card.states.visible = false
                 card.ability.bypass_aleph = true
                 card:start_dissolve()
@@ -40,7 +39,7 @@ function CardArea:emplace(card, ...)
                 emplace_ref(self, card, ...)
             end
         end
-        G.consumeables.config.card_count = G.consumeables.config.card_count + (card.ability.immutable.overflow_amount or 1)
+        G.consumeables.config.card_count = G.consumeables.config.card_count + (card.qty or 1)
     end
 end
 
@@ -49,7 +48,6 @@ function Card:set_edition(edition, ...)
     if self.area ~= G.consumeables or self.config.center.set == "Joker" or self.ability.split or Overflow.is_blacklisted(self) or not G.consumeables then
         set_editionref(self, edition, ...)
     else
-        if not self.ability.immutable then self.ability.immutable = {} end
         if Overflow.config.only_stack_negatives or (MP and MP.LOBBY and MP.LOBBY.code) then
             if (type(edition) == "string" and edition ~= "e_negative") or (type(edition) == "table" and not edition.negative) then
                 set_editionref(self, edition, ...)
@@ -58,7 +56,7 @@ function Card:set_edition(edition, ...)
                     return v.config.center.key == self.config.center.key and v.edition and v.edition.negative and v ~= self
                 end)
                 if v then
-                    Overflow.set_amount(v, (v.ability.immutable.overflow_amount or 1) + (self.ability.immutable.overflow_amount or 1))
+                    Overflow.set_amount(v, (v.qty or 1) + (self.qty or 1))
                     self.states.visible = false
                     self.ability.bypass_aleph = true
                     self:start_dissolve()
@@ -73,7 +71,7 @@ function Card:set_edition(edition, ...)
                 end
             end)
             if v then
-                Overflow.set_amount(v, (v.ability.immutable.overflow_amount or 1) + (self.ability.immutable.overflow_amount or 1))
+                Overflow.set_amount(v, (v.qty or 1) + (self.qty or 1))
                 self.states.visible = false
                 self.ability.bypass_aleph = true
                 self:start_dissolve()
@@ -94,11 +92,11 @@ G.FUNCS.use_card = function(e, mute, nosave)
         card.children.overflow_ui = nil 
     end
     if (not card.ability.cry_multiuse or to_big(card.ability.cry_multiuse) <= to_big(1)) then
-        if card.ability and card.ability.immutable and card.ability.immutable.overflow_amount and to_big(card.ability.immutable.overflow_amount) > to_big(1) and card.area == G.consumeables then
+        if card.qty and to_big(card.qty) > to_big(1) and card.area == G.consumeables then
             local new_card = copy_card(card)
             G.GAME.modifiers.entr_twisted = mod
             card.ability.bypass_aleph = true
-            local amount = card.ability.immutable.overflow_amount
+            local amount = card.qty
             use_cardref(e, mute, nosave)
             G.E_MANAGER:add_event(Event({
                 trigger = 'after',
@@ -106,11 +104,10 @@ G.FUNCS.use_card = function(e, mute, nosave)
                 func = function()
                     new_card:add_to_deck()
                     G.consumeables:emplace(new_card)
-                    new_card.ability.immutable = new_card.ability.immutable or {}
-                    new_card.ability.immutable.overflow_amount = amount - 1
-                    new_card.ability.immutable.overflow_amount_text = number_format(new_card.ability.immutable.overflow_amount)
+                    new_card.qty = amount - 1
+                    new_card.qty_text = number_format(new_card.qty)
                     new_card.bypass = true
-                    if to_big(new_card.ability.immutable.overflow_amount or 0) > to_big(0) then
+                    if to_big(new_card.qty or 0) > to_big(0) then
                         new_card:create_overflow_ui()
                     end
                     new_card.bypass = nil
@@ -120,8 +117,7 @@ G.FUNCS.use_card = function(e, mute, nosave)
         else
             G.GAME.modifiers.entr_twisted = mod
             card.ability.bypass_aleph = true
-            if not card.ability.immutable then card.ability.immutable = {} end
-            local amount = card.ability.immutable.overflow_amount
+            local amount = card.qty
             use_cardref(e, mute, nosave)
             G.E_MANAGER:add_event(Event({
                 trigger = 'after',
@@ -132,7 +128,7 @@ G.FUNCS.use_card = function(e, mute, nosave)
                         trigger = 'after',
                         delay = 0.3,
                         func = function()
-                            if to_big(card.ability.immutable.overflow_amount or 0) > to_big(0) then
+                            if to_big(card.qty or 0) > to_big(0) then
                                 card:create_overflow_ui()
                             end
                             return true
@@ -145,33 +141,20 @@ G.FUNCS.use_card = function(e, mute, nosave)
     else
         G.GAME.modifiers.entr_twisted = mod
         card.ability.bypass_aleph = true
-        local amount = card.ability.immutable.overflow_amount
+        local amount = card.qty
         use_cardref(e, mute, nosave)
         G.E_MANAGER:add_event(Event({
             trigger = 'after',
             delay = 0.3,
             func = function()
                 Overflow.set_amount(card, (amount or 1) - 1)
-                if to_big(card.ability.immutable.overflow_amount or 0) > to_big(0) then
+                if to_big(card.qty or 0) > to_big(0) then
                     card:create_overflow_ui()
                 end
                 return true
             end
         }))
     end
-    G.E_MANAGER:add_event(Event({
-        trigger = 'after',
-        func = function()
-            G.E_MANAGER:add_event(Event({
-                trigger = 'after',
-                func = function()
-                    e.config.ref_table.ability.overflow_used_amount = nil
-                    return true
-                end
-            }))
-            return true
-        end
-    }))
 end
 
 local copy_cardref = copy_card
@@ -180,9 +163,8 @@ function copy_card(other, new_card, card_scale, playing_card, strip_edition, don
     if other.area == G.consumeables and other.config.center.set ~= "Joker" and Overflow.can_merge(other, new_card2, nil, dont_reset_qty) and not Overflow.is_blacklisted(other) then
         if not dont_reset_qty then 
             new_card2.ability.split = nil
-            if not new_card2.ability.immutable then new_card2.ability.immutable = {} end
-            new_card2.ability.immutable.overflow_amount = 1
-            new_card2.ability.immutable.overflow_amount_text = ""
+            new_card2.qty = 1
+            new_card2.qty_text = ""
             G.E_MANAGER:add_event(Event({
                 trigger = 'after',
                 func = function()
@@ -193,17 +175,15 @@ function copy_card(other, new_card, card_scale, playing_card, strip_edition, don
             }))
             return new_card2
         else
-            Overflow.set_amount(other, to_big((other.ability.immutable.overflow_amount or 1)) * 2) 
-            if not new_card2.ability.immutable then new_card2.ability.immutable = {} end
-            new_card2.ability.immutable.overflow_amount = 0
+            Overflow.set_amount(other, to_big((other.qty or 1)) * 2) 
+            new_card2.qty = 0
             new_card2.ability.bypass_aleph = true
             new_card2:start_dissolve()
             return new_card2
         end
     else    
-        if not new_card2.ability.immutable then new_card2.ability.immutable = {} end
-        new_card2.ability.immutable.overflow_amount = 1
-        new_card2.ability.immutable.overflow_amount_text = ""
+        new_card2.qty = 1
+        new_card2.qty_text = ""
         return new_card2
     end
 end
@@ -211,9 +191,8 @@ end
 local set_cost_ref = Card.set_cost
 function Card:set_cost(...)
 	local cost = set_cost_ref(self, ...)
-    if not self.ability.immutable then self.ability.immutable = {} end
-    if self.ability.immutable.overflow_amount and to_big(self.ability.immutable.overflow_amount) > to_big(0) and self.ability.consumeable then
-	    local cost = self.sell_cost * (self.ability.immutable.overflow_amount or 1)
+    if self.qty and to_big(self.qty) > to_big(0) and self.ability.consumeable then
+	    local cost = self.sell_cost * (self.qty or 1)
         if to_big(math.abs(cost)) > to_big(0) then
             self.sell_cost = cost
         end
@@ -226,9 +205,8 @@ local card_load_ref = Card.load
 function Card:load(cardTable, other_card)
 	card_load_ref(self, cardTable, other_card)
 	if self.ability then
-		self.ability.immutable = self.ability.immutable or {}
-        self.ability.immutable.overflow_amount = cardTable.overflow_amount
-        if self.ability.immutable.overflow_amount then
+        self.qty = cardTable.overflow_amount
+        if self.qty then
             self.bypass = true
             self:create_overflow_ui()
             self.bypass = nil
@@ -238,7 +216,7 @@ end
 local card_save_ref = Card.save
 function Card:save()
     local tbl = card_save_ref(self)
-    tbl.overflow_amount = self and self.ability and self.ability.immutable and self.ability.immutable.overflow_amount
+    tbl.overflow_amount = self and self.qty
     return tbl
 end
 
@@ -262,43 +240,71 @@ if not SMODS then
     end
 end
 
-if not SMODS then
-    function create_UIBox_current_hands(simple)
+-- if not SMODS then
+--     function create_UIBox_current_hands(simple)
 
-    local hands = {
+--     local hands = {
 
-    }
-    for i, v in pairs(G.handlist) do
-        hands[#hands+1] = v
-    end
-    if Overflow.config.sorting_mode ~= 1 then
-        hands = Overflow.sort(hands, true)
-    end
-    for i, v in pairs(hands) do
-        hands[i] = create_UIBox_current_hand_row(v, simple)
-    end
-    local t = {n=G.UIT.ROOT, config={align = "cm", minw = 3, padding = 0.1, r = 0.1, colour = G.C.CLEAR}, nodes={
-      {n=G.UIT.R, config={align = "cm", padding = 0.04}, nodes=
-        hands
-      },
-    }}
+--     }
+--     for i, v in pairs(G.handlist) do
+--         hands[#hands+1] = v
+--     end
+--     if Overflow.config.sorting_mode ~= 1 then
+--         hands = Overflow.sort(hands, true)
+--     end
+--     for i, v in pairs(hands) do
+--         hands[i] = create_UIBox_current_hand_row(v, simple)
+--     end
+--     local t = {n=G.UIT.ROOT, config={align = "cm", minw = 3, padding = 0.1, r = 0.1, colour = G.C.CLEAR}, nodes={
+--       {n=G.UIT.R, config={align = "cm", padding = 0.04}, nodes=
+--         hands
+--       },
+--     }}
   
-    return t
-  end
+--     return t
+--   end
 
-end
+-- end
 
 function AllowStacking() end
 function AllowDividing() end
 function AllowMassUsing(set) Overflow.mass_use_sets[set] = true end
 function AllowBulkUse() end
 function Card:getQty()
-    if not self.ability.immutable then self.ability.immutable = {} end
-    return self.ability.immutable.overflow_amount or 1
+    if self:isInfinite() then return 1 end
+    return self.qty or 1
 end
 function Card:setQty(q)
     Overflow.set_amount(self, q)
 end
 function Card:set_stack_display()
     self:create_overflow_ui()
+end
+
+function Card:getInfinite()
+    return (self.qty or 1) >= math.huge
+end
+Card.isInfinite = Card.getInfinite
+
+function Card:setInfinite(no_ui)
+    self.qty = math.huge
+    self.qty_text = "Infinity"
+    if not no_ui then
+        self:create_overflow_ui()
+    end
+end
+
+function Card:toggleInfinite()
+    self.qty = self:isInfinite() and nil or math.huge
+end
+
+function Card:addQty(q)
+    self.qty = (self.qty or 1) + q
+    self:create_overflow_ui()
+end
+
+function Card:CanStack()
+    local cond1 = Overflow.can_merge(self, self, true)
+    local cond3 = self.config.center and (type(self.config.center.can_stack) == 'function' and self.config.center:can_stack()) or true 
+    return cond1 and cond2 and cond3
 end
