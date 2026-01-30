@@ -206,6 +206,7 @@ function Card:load(cardTable, other_card)
 	card_load_ref(self, cardTable, other_card)
 	if self.ability then
         self.qty = cardTable.overflow_amount
+        if cardTable.overflow_infinite then self.qty = math.huge end
         if self.qty then
             self.bypass = true
             self:create_overflow_ui()
@@ -217,6 +218,7 @@ local card_save_ref = Card.save
 function Card:save()
     local tbl = card_save_ref(self)
     tbl.overflow_amount = self and self.qty
+    tbl.overflow_infinite = self and self:isInfinite()
     return tbl
 end
 

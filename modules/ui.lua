@@ -1,6 +1,6 @@
 --manage buttons for the consumables
 function Card:create_overflow_ui()
-    if self.qty and (to_big(self.qty) == to_big(1) or to_big(self.qty) == to_big(0)) then
+    if self.qty and self.qty <= 1 then
         self.qty = nil
     end
     if self.qty and self.qty_text ~= "" and (self.area == G.consumeables or self.bypass) then
@@ -132,82 +132,84 @@ function Card:highlight(is_highlighted)
             }
             y = y + 0.5
         end
-        self.children.split_one = UIBox {
-            definition = {
-                n = G.UIT.ROOT,
-                config = {
-                    minh = 0.3,
-                    maxh = 0.5,
-                    minw = 0.4,
-                    maxw = 4,
-                    r = 0.08,
-                    padding = 0.1,
-                    align = 'cm',
-                    colour = G.C.DARK_EDITION,
-                    shadow = true,
-                    button = 'split_one',
-                    func = 'can_split_one',
-                    ref_table = self
-                },
-                nodes = {
-                    {
-                        n = G.UIT.T,
-                        config = {
-                            text = localize("k_split_one"),
-                            scale = 0.3,
-                            colour = G.C.UI.TEXT_LIGHT
+        if not self:isInfinite() then
+            self.children.split_one = UIBox {
+                definition = {
+                    n = G.UIT.ROOT,
+                    config = {
+                        minh = 0.3,
+                        maxh = 0.5,
+                        minw = 0.4,
+                        maxw = 4,
+                        r = 0.08,
+                        padding = 0.1,
+                        align = 'cm',
+                        colour = G.C.DARK_EDITION,
+                        shadow = true,
+                        button = 'split_one',
+                        func = 'can_split_one',
+                        ref_table = self
+                    },
+                    nodes = {
+                        {
+                            n = G.UIT.T,
+                            config = {
+                                text = localize("k_split_one"),
+                                scale = 0.3,
+                                colour = G.C.UI.TEXT_LIGHT
+                            }
                         }
                     }
-                }
-            },
-            config = {
-                align = 'bmi',
-                offset = {
-                    x = 0,
-                    y = y + 0.5
                 },
-                bond = 'Strong',
-                parent = self
-            }
-        }
-        self.children.split_half = UIBox {
-            definition = {
-                n = G.UIT.ROOT,
                 config = {
-                    minh = 0.3,
-                    maxh = 0.5,
-                    minw = 0.4,
-                    maxw = 4,
-                    r = 0.08,
-                    padding = 0.1,
-                    align = 'cm',
-                    colour = G.C.DARK_EDITION,
-                    shadow = true,
-                    button = 'split_half',
-                    func = 'can_split_half',
-                    ref_table = self
-                },
-                nodes = {
-                    {
-                        n = G.UIT.T,
-                        config = {
-                            text = localize("k_split_half"),
-                            scale = 0.3,
-                            colour = G.C.UI.TEXT_LIGHT
+                    align = 'bmi',
+                    offset = {
+                        x = 0,
+                        y = y + 0.5
+                    },
+                    bond = 'Strong',
+                    parent = self
+                }
+            }
+            self.children.split_half = UIBox {
+                definition = {
+                    n = G.UIT.ROOT,
+                    config = {
+                        minh = 0.3,
+                        maxh = 0.5,
+                        minw = 0.4,
+                        maxw = 4,
+                        r = 0.08,
+                        padding = 0.1,
+                        align = 'cm',
+                        colour = G.C.DARK_EDITION,
+                        shadow = true,
+                        button = 'split_half',
+                        func = 'can_split_half',
+                        ref_table = self
+                    },
+                    nodes = {
+                        {
+                            n = G.UIT.T,
+                            config = {
+                                text = localize("k_split_half"),
+                                scale = 0.3,
+                                colour = G.C.UI.TEXT_LIGHT
+                            }
                         }
                     }
-                }
-            },
-            config = {
-                align = 'bmi',
-                offset = {
-                    x = 0,
-                    y = y + 1
                 },
-                bond = 'Strong',
-                parent = self
+                config = {
+                    align = 'bmi',
+                    offset = {
+                        x = 0,
+                        y = y + 1
+                    },
+                    bond = 'Strong',
+                    parent = self
+                }
             }
-        }
+        end
         if Overflow.can_merge(self) then
             self.children.merge = UIBox {
                 definition = {
