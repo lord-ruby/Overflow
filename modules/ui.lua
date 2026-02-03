@@ -533,7 +533,7 @@ end
 
 G.FUNCS.can_split_half = function(e)
 	local card = e.config.ref_table
-	if to_big(card.qty) > to_big(1) then
+	if to_big(card.qty or 1) > to_big(1) then
         e.config.colour = G.C.SECONDARY_SET[card.config.center.set]
         e.config.button = 'split_half'
 		e.states.visible = true
