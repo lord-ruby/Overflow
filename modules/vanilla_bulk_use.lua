@@ -37,6 +37,7 @@ Overflow.bulk_use_functions = {
         local used_tarot = self
         local num = 1
         num = num * to_big(2) ^ to_big(amount)
+        num = math.min(num, 20 * amount)
         G.E_MANAGER:add_event(Event({trigger = 'after', delay = 0.4, func = function()
             play_sound('timpani')
             used_tarot:juice_up(0.3, 0.5)
