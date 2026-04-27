@@ -441,7 +441,7 @@ end
 
 G.FUNCS.can_bulk_use = function(e)
 	local card = e.config.ref_table
-	if (card.config.center.bulk_use or Overflow.bulk_use_functions[card.config.center.key]) and (not card.config.center.can_bulk_use or Overflow.can_bulk_use(card)) and to_big(card.qty) > to_big(1) then
+	if (card.config.center.bulk_use or Overflow.bulk_use_functions[card.config.center.key]) and (not card.config.center.can_bulk_use or Overflow.can_bulk_use(card)) and card.qty and to_big(card.qty) > to_big(1) then
         e.config.colour = G.C.SECONDARY_SET[card.config.center.set]
         e.config.button = 'bulk_use'
 		e.states.visible = true
@@ -533,7 +533,7 @@ end
 
 G.FUNCS.can_split_half = function(e)
 	local card = e.config.ref_table
-	if to_big(card.qty) > to_big(1) then
+	if card.qty and to_big(card.qty) > to_big(1) then
         e.config.colour = G.C.SECONDARY_SET[card.config.center.set]
         e.config.button = 'split_half'
 		e.states.visible = true
